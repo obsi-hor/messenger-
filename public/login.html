@@ -175,6 +175,13 @@
 
   $('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
   $('regPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('regBtn').click(); });
+ <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
 </script>
 </body>
   </html>
