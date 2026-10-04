@@ -1,0 +1,13 @@
+{
+  "background_color": "#17212b",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Messenger",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Messenger",
+  "start_url": "/app.html",
+  "theme_color": "#17212b",
+  "description": "Мессенджер с чатами, подарками и Окси",
+  "lang": "ru"
+}
