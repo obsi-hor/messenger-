@@ -61,11 +61,19 @@ function detectExt(buf){
 function publicUser(u){
   return {
     id:u.id, login:u.login, phone:u.phone, username:u.username,
+    extraUsernames:u.extraUsernames||[],
     name:u.name, bio:u.bio, avatar:u.avatar, hidden:!!u.hidden,
     birthday:u.birthday, oxy:u.oxy||0, gifts:u.gifts||[],
+    isAdmin:!!u.isAdmin, isCreator:!!u.isCreator,
+    twofaSet:!!u.twofaPassword,
     showPhone:u.showPhone, showLastSeen:u.showLastSeen,
     showBio:u.showBio, showBirthday:u.showBirthday
   };
+}
+function getClientIp(req){
+  const xff = req.headers['x-forwarded-for'];
+  if(xff) return String(xff).split(',')[0].trim();
+  return req.socket.remoteAddress || 'unknown';
 }
 
 function serveStatic(req,res){
@@ -81,9 +89,7 @@ function serveStatic(req,res){
 }
 
 async function uploadToB2(buf, key, mime){
-  await s3.send(new PutObjectCommand({
-    Bucket: BUCKET, Key: key, Body: buf, ContentType: mime
-  }));
+  await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: buf, ContentType: mime }));
 }
 
 async function serveB2(req,res,key){
@@ -98,6 +104,12 @@ async function serveB2(req,res,key){
 
 // ===== AUTH =====
 async function apiRegister(req,res){
+  const ip = getClientIp(req);
+  const ipRegs = db.getIpRegistrations(ip);
+  if (ipRegs.length >= 2) {
+    return json(res, 403, { error: 'С этого IP уже зарегистрировано 2 аккаунта' });
+  }
+
   const b=await readBody(req);
   const login=String(b.login||'').trim().toLowerCase();
   const password=String(b.password||'');
@@ -106,13 +118,16 @@ async function apiRegister(req,res){
   if(password.length<4)return json(res,400,{error:'Пароль минимум 4 символа'});
   if(db.findUserByLogin(login))return json(res,400,{error:'Логин занят'});
   if(!name)return json(res,400,{error:'Введите имя'});
+
   const user=db.createUser({login,passwordHash:hashPwd(password)});
   db.updateUser(user.id,{name});
   db.setOnline(user.id,true);
+  db.addIpRegistration(ip, user.id);
   const token=genToken();
   db.createSession(token,user.id);
   json(res,200,{ok:true,token,isNew:true,user:publicUser(user)});
 }
+
 async function apiLogin(req,res){
   const b=await readBody(req);
   const login=String(b.login||'').trim().toLowerCase();
@@ -120,15 +135,33 @@ async function apiLogin(req,res){
   const user=db.findUserByLogin(login);
   if(!user)return json(res,400,{error:'Неверный логин или пароль'});
   if(!verifyPwd(password,user.passwordHash))return json(res,400,{error:'Неверный логин или пароль'});
+
+  // 2FA
+  if(user.twofaPassword || user.twofaWord){
+    const faPass = String(b.twofaPassword||'');
+    const faWord = String(b.twofaWord||'');
+    if (!faPass && !faWord) {
+      return json(res, 200, { ok: false, need2fa: true });
+    }
+    if (user.twofaPassword && faPass !== user.twofaPassword) {
+      return json(res, 400, { error: 'Неверный пароль 2FA' });
+    }
+    if (user.twofaWord && faWord.toLowerCase().trim() !== (user.twofaWord||'').toLowerCase()) {
+      return json(res, 400, { error: 'Неверное кодовое слово' });
+    }
+  }
+
   db.setOnline(user.id,true);
   const token=genToken();
   db.createSession(token,user.id);
   json(res,200,{ok:true,token,isNew:false,user:publicUser(user)});
 }
+
 async function apiMe(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   json(res,200,{...publicUser(u),online:u.online,lastSeen:u.lastSeen});
 }
+
 async function apiUpdateProfile(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const b=await readBody(req); const patch={};
@@ -136,7 +169,7 @@ async function apiUpdateProfile(req,res){
   if('username' in b){
     const un=String(b.username||'').trim().toLowerCase().slice(0,16);
     if(!/^[a-z0-9_]{5,16}$/.test(un))return json(res,400,{error:'Юзернейм: 5–16'});
-    const t=db.findUserByUsername(un);
+    const t=db.findUserByAnyUsername(un);
     if(t&&t.id!==u.id)return json(res,400,{error:'Занят'});
     patch.username=un;
   }
@@ -145,6 +178,7 @@ async function apiUpdateProfile(req,res){
   db.updateUser(u.id,patch);
   json(res,200,{ok:true});
 }
+
 async function apiUpdateSettings(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const b=await readBody(req); const patch={};
@@ -154,6 +188,7 @@ async function apiUpdateSettings(req,res){
   db.updateUser(u.id,patch);
   json(res,200,{ok:true});
 }
+
 async function apiSetHidden(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const b=await readBody(req);
@@ -162,9 +197,26 @@ async function apiSetHidden(req,res){
 }
 async function apiRemovePhone(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
-  db.removePhone(u.id);
+  db.updateUser(u.id, { phone: null });
   json(res,200,{ok:true});
 }
+
+// ===== 2FA SETUP =====
+async function apiSetup2fa(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const pass = String(b.password||'').trim();
+  const word = String(b.word||'').trim();
+  if (!pass && !word) {
+    db.set2FA(u.id, null, null);
+    return json(res,200,{ok:true, removed: true});
+  }
+  if (pass && pass.length < 4) return json(res,400,{error:'Пароль 2FA минимум 4 символа'});
+  db.set2FA(u.id, pass || null, word || null);
+  json(res,200,{ok:true});
+}
+
+// ===== UPLOADS =====
 async function apiUploadAvatar(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   try{
@@ -178,6 +230,7 @@ async function apiUploadAvatar(req,res){
     json(res,200,{ok:true,avatar:'/uploads/'+key});
   }catch(e){console.error(e);json(res,400,{error:'Не удалось'})}
 }
+
 async function apiUploadChat(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   try{
@@ -190,22 +243,40 @@ async function apiUploadChat(req,res){
     json(res,200,{ok:true,image:'/uploads/'+key});
   }catch(e){console.error(e);json(res,400,{error:'Не удалось'})}
 }
+
+async function apiUploadPost(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  try{
+    const buf=await readRaw(req,20*1024*1024);
+    if(!buf.length)return json(res,400,{error:'Пустой файл'});
+    const ext=detectExt(buf); if(!ext)return json(res,400,{error:'Только изображение'});
+    const key='posts/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+ext;
+    const mime=ext==='.jpg'?'image/jpeg':ext==='.png'?'image/png':'image/webp';
+    await uploadToB2(buf,key,mime);
+    json(res,200,{ok:true,image:'/uploads/'+key});
+  }catch(e){console.error(e);json(res,400,{error:'Не удалось'})}
+}
+
+// ===== SEARCH =====
 async function apiSearch(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const q=String(new URL(req.url,'http://x').searchParams.get('q')||'').trim().toLowerCase();
   if(!q)return json(res,200,{users:[]});
-  const r=db.findUserByUsername(q);
+  const r=db.findUserByAnyUsername(q);
   if(r&&r.id!==u.id&&!r.hidden){
-    json(res,200,{users:[{id:r.id,name:r.name,username:r.username,avatar:r.avatar}]});
+    json(res,200,{users:[{id:r.id,name:r.name,username:r.username,avatar:r.avatar,isCreator:!!r.isCreator}]});
   }else json(res,200,{users:[]});
 }
+
 async function apiUserInfo(req,res){
   const me=getUser(req); if(!me)return json(res,401,{error:'Не авторизован'});
   const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
   const u=db.findUserById(id); if(!u)return json(res,404,{error:'Не найден'});
   const isSelf=me.id===u.id;
-  const out={id:u.id,name:u.name,username:u.username,avatar:u.avatar,
-    online:!!u.online,lastSeen:u.lastSeen,oxy:u.oxy||0,gifts:u.gifts||[]};
+  const out={id:u.id,name:u.name,username:u.username,extraUsernames:u.extraUsernames||[],
+    avatar:u.avatar,online:!!u.online,lastSeen:u.lastSeen,oxy:u.oxy||0,
+    gifts:u.gifts||[],isCreator:!!u.isCreator,isAdmin:!!u.isAdmin,
+    isContact: db.isContact(me.id, u.id)};
   if(isSelf){out.login=u.login;out.bio=u.bio||'';out.birthday=u.birthday||'';}
   else{
     out.bio=u.showBio==='nobody'?'':(u.bio||'');
@@ -214,6 +285,8 @@ async function apiUserInfo(req,res){
   }
   json(res,200,out);
 }
+
+// ===== CHATS =====
 async function apiChats(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   json(res,200,{chats:db.getUserChats(u.id)});
@@ -236,19 +309,47 @@ async function apiMessages(req,res){
     const chat=db.getChatById(chatId);
     for(const m of chat.members) if(m!==u.id) sendToUser(m,{type:'read',chatId,by:u.id});
   }
-  json(res,200,{messages:db.getChatMessages(chatId)});
+  json(res,200,{messages:db.getChatMessages(chatId, u.id)});
 }
 
-// ===== OXY API =====
+// ===== BLOCK / CLEAR =====
+async function apiBlock(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.blockUser(u.id, Number(b.userId));
+  if(r.error) return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
+}
+async function apiUnblock(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  db.unblockUser(u.id, Number(b.userId));
+  json(res,200,{ok:true});
+}
+async function apiClearChat(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const chatId = Number(b.chatId);
+  if(!db.isChatMember(chatId, u.id)) return json(res,403,{error:'Нет доступа'});
+  if (b.all) {
+    db.clearChatForAll(chatId);
+  } else {
+    db.clearChatForUser(chatId, u.id);
+  }
+  json(res,200,{ok:true});
+}
+
+// ===== OXY =====
 async function apiOxyBalance(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   json(res,200,{balance:u.oxy||0,transactions:db.getTransactions(u.id,50)});
 }
 async function apiOxyTopup(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  if (!u.isAdmin) return json(res, 403, { error: 'Только для админа' });
   const b=await readBody(req);
-  const amount=Math.max(1,Math.min(10000,Number(b.amount)||0));
-  const r=db.addOxy(u.id,amount,'Пополнение');
+  const amount=Math.max(1,Math.min(100000,Number(b.amount)||0));
+  const r=db.addOxy(u.id,amount,'Пополнение (админ)');
   json(res,200,{ok:true,balance:r.balance});
 }
 async function apiSendGift(req,res){
@@ -262,11 +363,74 @@ async function apiSendGift(req,res){
   if(r.error)return json(res,400,{error:r.error});
   json(res,200,{ok:true});
 }
+async function apiSellGift(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const index = Number(b.index);
+  if (isNaN(index) || index < 0) return json(res, 400, { error: 'Неверный индекс' });
+  const r = db.sellGift(u.id, index);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
 async function apiUserGifts(req,res){
   const me=getUser(req); if(!me)return json(res,401,{error:'Не авторизован'});
   const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
   const u=db.findUserById(id); if(!u)return json(res,404,{error:'Не найден'});
   json(res,200,{gifts:u.gifts||[]});
+}
+
+// ===== USERNAMES =====
+async function apiBuyUsername(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const username = String(b.username||'').trim().toLowerCase();
+  const r = db.buyExtraUsername(u.id, username);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+async function apiUsernamePrice(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const count = (u.extraUsernames||[]).length;
+  json(res, 200, { price: db.getUsernamePrice(count+1), count, max: 5 });
+}
+
+// ===== CONTACTS =====
+async function apiContacts(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  json(res,200,{contacts:db.getContacts(u.id)});
+}
+async function apiAddContact(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r=db.addContact(u.id, Number(b.userId));
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
+}
+async function apiRemoveContact(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  db.removeContact(u.id, Number(b.userId));
+  json(res,200,{ok:true});
+}
+
+// ===== POSTS =====
+async function apiUserPosts(req,res){
+  const me=getUser(req); if(!me)return json(res,401,{error:'Не авторизован'});
+  const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
+  json(res,200,{posts:db.getPosts(id,50)});
+}
+async function apiCreatePost(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const post = db.createPost(u.id, b.image||null, String(b.text||'').slice(0,1000));
+  json(res,200,{ok:true,post});
+}
+async function apiDeletePost(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.deletePost(Number(b.postId), u.id);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
 }
 
 // ===== HTTP =====
@@ -279,8 +443,10 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/me'           && req.method==='GET') return apiMe(req,res);
     if(url==='/api/profile'      && req.method==='POST')return apiUpdateProfile(req,res);
     if(url==='/api/settings'     && req.method==='POST')return apiUpdateSettings(req,res);
+    if(url==='/api/2fa/setup'    && req.method==='POST')return apiSetup2fa(req,res);
     if(url==='/api/avatar'       && req.method==='POST')return apiUploadAvatar(req,res);
     if(url==='/api/upload-chat'  && req.method==='POST')return apiUploadChat(req,res);
+    if(url==='/api/upload-post'  && req.method==='POST')return apiUploadPost(req,res);
     if(url==='/api/hidden'       && req.method==='POST')return apiSetHidden(req,res);
     if(url==='/api/remove-phone' && req.method==='POST')return apiRemovePhone(req,res);
     if(url==='/api/search'       && req.method==='GET') return apiSearch(req,res);
@@ -288,10 +454,22 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/chats'        && req.method==='GET') return apiChats(req,res);
     if(url==='/api/chats/create' && req.method==='POST')return apiCreateChat(req,res);
     if(url==='/api/messages'     && req.method==='GET') return apiMessages(req,res);
+    if(url==='/api/block'        && req.method==='POST')return apiBlock(req,res);
+    if(url==='/api/unblock'      && req.method==='POST')return apiUnblock(req,res);
+    if(url==='/api/chat/clear'   && req.method==='POST')return apiClearChat(req,res);
     if(url==='/api/oxy'          && req.method==='GET') return apiOxyBalance(req,res);
     if(url==='/api/oxy/topup'    && req.method==='POST')return apiOxyTopup(req,res);
     if(url==='/api/gift'         && req.method==='POST')return apiSendGift(req,res);
+    if(url==='/api/gift/sell'    && req.method==='POST')return apiSellGift(req,res);
     if(url==='/api/gifts'        && req.method==='GET') return apiUserGifts(req,res);
+    if(url==='/api/username/buy' && req.method==='POST')return apiBuyUsername(req,res);
+    if(url==='/api/username/price'&&req.method==='GET') return apiUsernamePrice(req,res);
+    if(url==='/api/contacts'     && req.method==='GET') return apiContacts(req,res);
+    if(url==='/api/contacts/add' && req.method==='POST')return apiAddContact(req,res);
+    if(url==='/api/contacts/remove'&&req.method==='POST')return apiRemoveContact(req,res);
+    if(url==='/api/posts'        && req.method==='GET') return apiUserPosts(req,res);
+    if(url==='/api/posts/create' && req.method==='POST')return apiCreatePost(req,res);
+    if(url==='/api/posts/delete' && req.method==='POST')return apiDeletePost(req,res);
   }catch(e){console.error('API ERROR:',e);return json(res,500,{error:'Ошибка'})}
   serveStatic(req,res);
 });
@@ -317,10 +495,18 @@ wss.on('connection',(ws,req)=>{
       const chatId=Number(d.chatId);
       const text=String(d.text||'').trim().slice(0,2000);
       const image=d.image?String(d.image).slice(0,500):null;
+      const replyTo = d.replyTo ? Number(d.replyTo) : null;
       if(!text&&!image)return;
       if(!db.isChatMember(chatId,u.id))return;
-      const msg=db.createMessage(chatId,u.id,text,image);
       const chat=db.getChatById(chatId);
+      for (const memberId of chat.members) {
+        if (memberId === u.id) continue;
+        if (db.isBlocked(u.id, memberId)) {
+          ws.send(JSON.stringify({type:'blocked', chatId}));
+          return;
+        }
+      }
+      const msg=db.createMessage(chatId,u.id,text,image,replyTo);
       for(const m of chat.members) sendToUser(m,{type:'message',chatId,message:msg});
     }
   });
