@@ -1,0 +1,15 @@
+{
+  "appId": "com.oksepau.messenger",
+  "appName": "OPmess",
+  "webDir": "public",
+  "server": {
+    "url": "https://messenger-hgfv.onrender.com",
+    "cleartext": true,
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
+}
