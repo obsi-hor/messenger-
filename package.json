@@ -8,5 +8,10 @@
   "dependencies": {
     "ws": "^8.18.0",
     "@aws-sdk/client-s3": "^3.700.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.0",
+    "@capacitor/core": "^6.1.0",
+    "@capacitor/android": "^6.1.0"
   }
 }
