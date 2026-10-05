@@ -64,6 +64,7 @@ function publicUser(u){
     extraUsernames:u.extraUsernames||[],
     name:u.name, bio:u.bio, avatar:u.avatar,
     birthday:u.birthday, oxy:u.oxy||0, gifts:u.gifts||[],
+    nfts:u.nfts||[], profileNft:u.profileNft||null,
     isAdmin:!!u.isAdmin, isCreator:!!u.isCreator,
     showPhone:u.showPhone, showLastSeen:u.showLastSeen,
     showBio:u.showBio, showBirthday:u.showBirthday
@@ -133,8 +134,6 @@ async function apiLogin(req,res){
   const user=db.findUserByLogin(login);
   if(!user)return json(res,400,{error:'Неверный логин или пароль'});
   if(!verifyPwd(password,user.passwordHash))return json(res,400,{error:'Неверный логин или пароль'});
-
-  // 2FA
   if(user.twofaPassword || user.twofaWord){
     const faPass = String(b.twofaPassword||'');
     const faWord = String(b.twofaWord||'');
@@ -142,7 +141,6 @@ async function apiLogin(req,res){
     if (user.twofaPassword && faPass !== user.twofaPassword) return json(res, 400, { error: 'Неверный пароль 2FA' });
     if (user.twofaWord && faWord.toLowerCase().trim() !== (user.twofaWord||'').toLowerCase()) return json(res, 400, { error: 'Неверное кодовое слово' });
   }
-
   db.setOnline(user.id,true);
   const token=genToken();
   db.createSession(token,user.id);
@@ -191,7 +189,6 @@ async function apiRemovePhone(req,res){
   json(res,200,{ok:true});
 }
 
-// ===== 2FA SETUP =====
 async function apiSetup2fa(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const b=await readBody(req);
@@ -265,8 +262,8 @@ async function apiUserInfo(req,res){
   const isSelf=me.id===u.id;
   const out={id:u.id,name:u.name,username:u.username,extraUsernames:u.extraUsernames||[],
     avatar:u.avatar,online:!!u.online,lastSeen:u.lastSeen,oxy:u.oxy||0,
-    gifts:u.gifts||[],isCreator:!!u.isCreator,isAdmin:!!u.isAdmin,
-    isContact: false};
+    gifts:u.gifts||[],nfts:u.nfts||[],profileNft:u.profileNft||null,
+    isCreator:!!u.isCreator,isAdmin:!!u.isAdmin,isContact:false};
   if(isSelf){out.login=u.login;out.bio=u.bio||'';out.birthday=u.birthday||'';}
   else{
     out.bio=u.showBio==='nobody'?'':(u.bio||'');
@@ -316,10 +313,78 @@ async function apiOxyTopup(req,res){
   json(res,200,{ok:true,balance:r.balance});
 }
 
+// ===== ORDINARY GIFTS =====
+async function apiSendGift(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const toId=Number(b.toUserId);
+  const giftId=String(b.giftId||'');
+  const price=Number(b.price)||0;
+  if(!toId||!giftId||!price)return json(res,400,{error:'Неверные данные'});
+  const r=db.sendGift(u.id,toId,giftId,price);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
+}
+async function apiSellGift(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const index = Number(b.index);
+  if (isNaN(index) || index < 0) return json(res, 400, { error: 'Неверный индекс' });
+  const r = db.sellGift(u.id, index);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+
+// ===== NFT =====
+async function apiNftPrices(req,res){
+  json(res, 200, { prices: db.getNftPrices() });
+}
+async function apiNftBuy(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const type = String(b.type||'');
+  const r = db.buyNft(u.id, type);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+async function apiNftSell(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const nftId = String(b.nftId||'');
+  const r = db.sellNft(u.id, nftId);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+async function apiNftSetProfile(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const nftId = b.nftId === null ? null : String(b.nftId||'');
+  const r = db.setProfileNft(u.id, nftId);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+async function apiNftGive(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const toId = Number(b.toUserId);
+  const nftId = String(b.nftId||'');
+  if (!toId || !nftId) return json(res, 400, { error: 'Неверные данные' });
+  const r = db.giveNft(u.id, toId, nftId);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+
 // ===== CONTACTS =====
 async function apiContacts(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
-  json(res,200,{contacts: db.getContacts ? db.getContacts(u.id) : []});
+  json(res,200,{contacts: db.getContacts(u.id)});
+}
+async function apiAddContact(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r=db.addContact(u.id, Number(b.userId));
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
 }
 
 // ===== HTTP =====
@@ -344,7 +409,15 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/messages'     && req.method==='GET') return apiMessages(req,res);
     if(url==='/api/oxy'          && req.method==='GET') return apiOxyBalance(req,res);
     if(url==='/api/oxy/topup'    && req.method==='POST')return apiOxyTopup(req,res);
+    if(url==='/api/gift'         && req.method==='POST')return apiSendGift(req,res);
+    if(url==='/api/gift/sell'    && req.method==='POST')return apiSellGift(req,res);
+    if(url==='/api/nft/prices'   && req.method==='GET') return apiNftPrices(req,res);
+    if(url==='/api/nft/buy'      && req.method==='POST')return apiNftBuy(req,res);
+    if(url==='/api/nft/sell'     && req.method==='POST')return apiNftSell(req,res);
+    if(url==='/api/nft/profile'  && req.method==='POST')return apiNftSetProfile(req,res);
+    if(url==='/api/nft/give'     && req.method==='POST')return apiNftGive(req,res);
     if(url==='/api/contacts'     && req.method==='GET') return apiContacts(req,res);
+    if(url==='/api/contacts/add' && req.method==='POST')return apiAddContact(req,res);
   }catch(e){console.error('API ERROR:',e);return json(res,500,{error:'Ошибка'})}
   serveStatic(req,res);
 });
@@ -371,9 +444,11 @@ wss.on('connection',(ws,req)=>{
       const text=String(d.text||'').trim().slice(0,2000);
       const image=d.image?String(d.image).slice(0,500):null;
       const replyTo = d.replyTo ? Number(d.replyTo) : null;
-      if(!text&&!image)return;
+      const nftData = d.nft || null;
+      if(!text&&!image&&!nftData)return;
       if(!db.isChatMember(chatId,u.id))return;
-      const msg=db.createMessage(chatId,u.id,text,image,replyTo);
+      const extra = nftData ? { nft: nftData } : null;
+      const msg=db.createMessage(chatId,u.id,text,image,replyTo,extra);
       const chat=db.getChatById(chatId);
       for(const m of chat.members) sendToUser(m,{type:'message',chatId,message:msg});
     }
