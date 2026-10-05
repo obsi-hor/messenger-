@@ -98,167 +98,166 @@
   .contact-body { flex: 1; min-width: 0; }
   .contact-name { font-size: 15px; font-weight: 500; display:flex; align-items:center; }
   .contact-username { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
+ /* профиль */
+.profile-top {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 24px 16px 20px;
+}
+.profile-avatar {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 42px; font-weight: 500; text-transform: uppercase;
+  background-size: cover; background-position: center;
+  cursor: pointer; position: relative; margin-bottom: 14px;
+}
+.profile-avatar .cam {
+  position: absolute; right: -4px; bottom: -4px;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #6ab2f2; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; border: 3px solid #17212b;
+}
+.profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; display:flex; align-items:center; }
+.profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
+.profile-status { font-size: 14px; color: #7d8e9e; }
+.profile-actions { display: flex; gap: 8px; padding: 0 12px; margin: 16px 0; }
+.profile-action {
+  flex: 1; background: #232e3c; border-radius: 12px;
+  padding: 12px 8px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px; cursor: pointer;
+}
+.profile-action .ico { font-size: 22px; color: #6ab2f2; }
+.profile-action .lbl { font-size: 12px; color: #fff; }
+.profile-info { background: #232e3c; border-radius: 14px; margin: 0 12px 12px; overflow: hidden; }
+.profile-info-row { padding: 12px 16px; border-bottom: 1px solid #2f3d4c; }
+.profile-info-row:last-child { border-bottom: 0; }
+.profile-info-row .val { font-size: 16px; word-wrap: break-word; }
+.profile-info-row .lbl { font-size: 13px; color: #7d8e9e; margin-top: 3px; }
 
-  /* профиль */
-  .profile-top {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 24px 16px 20px;
-  }
-  .profile-avatar {
-    width: 110px; height: 110px; border-radius: 50%;
-    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
-    color: #fff; display: flex; align-items: center; justify-content: center;
-    font-size: 42px; font-weight: 500; text-transform: uppercase;
-    background-size: cover; background-position: center;
-    cursor: pointer; position: relative; margin-bottom: 14px;
-  }
-  .profile-avatar .cam {
-    position: absolute; right: -4px; bottom: -4px;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: #6ab2f2; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; border: 3px solid #17212b;
-  }
-  .profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; display:flex; align-items:center; }
-  .profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
-  .profile-status { font-size: 14px; color: #7d8e9e; }
-  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin: 16px 0; }
-  .profile-action {
-    flex: 1; background: #232e3c; border-radius: 12px;
-    padding: 12px 8px;
-    display: flex; flex-direction: column;
-    align-items: center; gap: 6px; cursor: pointer;
-  }
-  .profile-action .ico { font-size: 22px; color: #6ab2f2; }
-  .profile-action .lbl { font-size: 12px; color: #fff; }
-  .profile-info { background: #232e3c; border-radius: 14px; margin: 0 12px 12px; overflow: hidden; }
-  .profile-info-row { padding: 12px 16px; border-bottom: 1px solid #2f3d4c; }
-  .profile-info-row:last-child { border-bottom: 0; }
-  .profile-info-row .val { font-size: 16px; word-wrap: break-word; }
-  .profile-info-row .lbl { font-size: 13px; color: #7d8e9e; margin-top: 3px; }
+.profile-tabs { display: flex; gap: 4px; margin: 0 12px 12px; }
+.profile-tab {
+  flex: 1; padding: 10px;
+  background: #232e3c; border: 0;
+  color: #7d8e9e; font-size: 13px;
+  border-radius: 10px; cursor: pointer; font-weight: 500;
+}
+.profile-tab.on { background: #6ab2f2; color: #fff; }
+.profile-tab-content { padding: 0 12px; }
 
-  .profile-tabs { display: flex; gap: 4px; margin: 0 12px 12px; }
-  .profile-tab {
-    flex: 1; padding: 10px 6px;
-    background: #232e3c; border: 0;
-    color: #7d8e9e; font-size: 13px;
-    border-radius: 10px; cursor: pointer; font-weight: 500;
-  }
-  .profile-tab.on { background: #6ab2f2; color: #fff; }
-  .profile-tab-content { padding: 0 12px; }
+.profile-tab-empty { text-align: center; padding: 32px 16px; }
+.profile-tab-empty h3 { font-size: 17px; font-weight: 500; margin: 0 0 6px; }
+.profile-tab-empty p { color: #7d8e9e; font-size: 14px; margin: 0 0 16px; }
+.profile-add-btn {
+  display: inline-block; padding: 12px 32px;
+  background: #6ab2f2; color: #fff;
+  border: 0; border-radius: 22px;
+  font-size: 15px; font-weight: 500; cursor: pointer;
+}
 
-  .profile-tab-empty { text-align: center; padding: 32px 16px; }
-  .profile-tab-empty h3 { font-size: 17px; font-weight: 500; margin: 0 0 6px; }
-  .profile-tab-empty p { color: #7d8e9e; font-size: 14px; margin: 0 0 16px; }
-  .profile-add-btn {
-    display: inline-block; padding: 12px 32px;
-    background: #6ab2f2; color: #fff;
-    border: 0; border-radius: 22px;
-    font-size: 15px; font-weight: 500; cursor: pointer;
-  }
+/* сетка подарков */
+.gift-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.gift-card {
+  background: linear-gradient(135deg, #232e3c, #2a3a5c);
+  border-radius: 14px; padding: 14px 10px;
+  text-align: center; cursor: pointer;
+  position: relative; overflow: hidden;
+  min-height: 80px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gift-card.nft {
+  background-size: cover; background-position: center;
+  min-height: 140px;
+  flex-direction: column; justify-content: flex-end;
+}
+.gift-card .num {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(0,0,0,.5);
+  color: #fff; font-size: 11px;
+  padding: 2px 8px; border-radius: 10px;
+}
+.gift-card .gift-emoji { font-size: 40px; margin: 0; }
+.gift-card .gift-owner {
+  font-size: 11px; color: #eee;
+  background: rgba(0,0,0,.5);
+  padding: 3px 8px; border-radius: 8px;
+  margin: 4px 6px 0;
+}
 
-  /* сетка подарков */
-  .gift-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .gift-card {
-    background: linear-gradient(135deg, #232e3c, #2a3a5c);
-    border-radius: 14px; padding: 14px 10px;
-    text-align: center; cursor: pointer;
-    position: relative; overflow: hidden;
-    min-height: 80px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .gift-card.nft {
-    background-size: cover; background-position: center;
-    min-height: 140px;
-    flex-direction: column; justify-content: flex-end;
-  }
-  .gift-card .num {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,.5);
-    color: #fff; font-size: 11px;
-    padding: 2px 8px; border-radius: 10px;
-  }
-  .gift-card .gift-emoji { font-size: 40px; margin: 0; }
-  .gift-card .gift-owner {
-    font-size: 11px; color: #eee;
-    background: rgba(0,0,0,.5);
-    padding: 3px 8px; border-radius: 8px;
-    margin: 4px 6px 0;
-  }
-   /* настройки */
-  .settings-row {
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 20px; min-height: 56px;
-    cursor: pointer;
-    border-bottom: 1px solid #0f171f;
-  }
-  .settings-row:hover { background: #232e3c; }
-  .settings-row .row-icon { width: 24px; text-align: center; font-size: 18px; color: #6ab2f2; }
-  .settings-row .row-body { flex: 1; min-width: 0; }
-  .settings-row .row-title { font-size: 15px; }
-  .settings-row .row-value { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
-  .settings-row .row-arrow { color: #3a4a5a; font-size: 16px; }
-  .settings-row.danger .row-title { color: #e85c5c; }
-  .settings-row.danger .row-icon { color: #e85c5c; }
+/* настройки */
+.settings-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px; min-height: 56px;
+  cursor: pointer;
+  border-bottom: 1px solid #0f171f;
+}
+.settings-row:hover { background: #232e3c; }
+.settings-row .row-icon { width: 24px; text-align: center; font-size: 18px; color: #6ab2f2; }
+.settings-row .row-body { flex: 1; min-width: 0; }
+.settings-row .row-title { font-size: 15px; }
+.settings-row .row-value { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
+.settings-row .row-arrow { color: #3a4a5a; font-size: 16px; }
+.settings-row.danger .row-title { color: #e85c5c; }
+.settings-row.danger .row-icon { color: #e85c5c; }
 
-  /* комната */
-  #roomScreen {
-    position: fixed; inset: 0;
-    background: #0e1621;
-    display: none; flex-direction: column; z-index: 20;
-  }
-  #roomScreen.on { display: flex; }
-  .room-header {
-    height: 56px; padding: 0 8px;
-    padding-top: env(safe-area-inset-top);
-    background: #17212b; border-bottom: 1px solid #0f171f;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .room-header button {
-    width: 40px; height: 40px;
-    background: transparent; border: 0;
-    color: #6ab2f2; font-size: 20px; cursor: pointer;
-    flex-shrink: 0;
-  }
-  .room-header .room-info { flex: 1; min-width: 0; cursor: pointer; }
-  .room-header .room-title {
-    font-size: 16px; font-weight: 500;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .room-header .room-sub {
-    font-size: 12px; color: #7d8e9e;
-    margin-top: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  #roomMessages {
-    flex: 1; overflow-y: auto; padding: 12px 8px;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .msg {
-    max-width: 78%; padding: 8px 12px;
-    border-radius: 12px; background: #182533;
-    font-size: 15px; word-wrap: break-word;
-    align-self: flex-start;
-    touch-action: pan-y;
-    transition: transform .15s ease;
-    position: relative;
-  }
-  .msg.swiping { transition: none; }
-  .msg.own { background: #2b5278; align-self: flex-end; }
-  .msg .meta { font-size: 11px; opacity: .6; margin-top: 4px; }
-  .msg .reply-quote {
-    background: rgba(0,0,0,.25);
-    border-left: 3px solid #6ab2f2;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    font-size: 13px;
-    overflow: hidden;
-  }
-  .msg .reply-quote .qname { color: #6ab2f2; font-weight: 500; margin-bottom: 2px; }
-  .msg .reply-quote .qtext { color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .nft-card {
+/* комната */
+#roomScreen {
+  position: fixed; inset: 0;
+  background: #0e1621;
+  display: none; flex-direction: column; z-index: 20;
+}
+#roomScreen.on { display: flex; }
+.room-header {
+  height: 56px; padding: 0 8px;
+  padding-top: env(safe-area-inset-top);
+  background: #17212b; border-bottom: 1px solid #0f171f;
+  display: flex; align-items: center; gap: 8px;
+}
+.room-header button {
+  width: 40px; height: 40px;
+  background: transparent; border: 0;
+  color: #6ab2f2; font-size: 20px; cursor: pointer;
+  flex-shrink: 0;
+}
+.room-header .room-info { flex: 1; min-width: 0; cursor: pointer; }
+.room-header .room-title {
+  font-size: 16px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.room-header .room-sub {
+  font-size: 12px; color: #7d8e9e;
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#roomMessages {
+  flex: 1; overflow-y: auto; padding: 12px 8px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.msg {
+  max-width: 78%; padding: 8px 12px;
+  border-radius: 12px; background: #182533;
+  font-size: 15px; word-wrap: break-word;
+  align-self: flex-start;
+  touch-action: pan-y;
+  transition: transform .15s ease;
+  position: relative;
+}
+.msg.swiping { transition: none; }
+.msg.own { background: #2b5278; align-self: flex-end; }
+.msg .meta { font-size: 11px; opacity: .6; margin-top: 4px; }
+.msg .reply-quote {
+  background: rgba(0,0,0,.25);
+  border-left: 3px solid #6ab2f2;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  overflow: hidden;
+}
+.msg .reply-quote .qname { color: #6ab2f2; font-weight: 500; margin-bottom: 2px; }
+.msg .reply-quote .qtext { color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+   .nft-card {
     max-width: 85%;
     border-radius: 16px;
     overflow: hidden;
@@ -339,7 +338,6 @@
   }
   .room-input #giftBtn { background: #232e3c; color: #6ab2f2; font-size: 20px; }
 
-  /* боковое меню */
   #roomSidebar {
     position: fixed; top: 0; right: -300px;
     width: 280px; height: 100dvh;
@@ -356,7 +354,6 @@
     font-weight: 500;
   }
 
-  /* модалки */
   .modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.75);
@@ -371,7 +368,7 @@
   }
   .modal-body h3 { margin: 0 0 16px; font-size: 18px; text-align: center; }
   .modal-body p { margin: 0 0 16px; font-size: 14px; color: #7d8e9e; text-align: center; line-height: 1.4; }
-  .modal-body input, .modal-body textarea, .modal-body select {
+  .modal-body input, .modal-body textarea {
     width: 100%; background: #232e3c; border: 0;
     color: #fff; padding: 12px 16px; border-radius: 10px;
     font-size: 15px; outline: none; margin-bottom: 10px;
@@ -394,7 +391,6 @@
     border-radius: 10px; font-size: 15px; cursor: pointer;
   }
 
-  /* каталог */
   .shop-grid {
     display: grid; grid-template-columns: repeat(2, 1fr);
     gap: 10px; padding: 4px 0;
@@ -418,6 +414,28 @@
   .shop-card .shop-emoji { font-size: 48px; }
   .shop-card .shop-name { font-size: 14px; font-weight: 500; }
   .shop-card .shop-price { font-size: 14px; color: #6ab2f2; margin-top: 4px; }
+
+  .gift-animation {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    z-index: 100; pointer-events: none; opacity: 0;
+  }
+  .gift-animation.on { animation: giftPop 2s ease-out forwards; }
+  .gift-animation .gift-icon {
+    font-size: 120px; text-align: center;
+    filter: drop-shadow(0 0 40px rgba(255,220,120,.8));
+  }
+  @keyframes giftPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    40% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -150%) scale(0.5); }
+  }
+  .gift-animation .gift-text {
+    text-align: center; color: #fff; font-size: 18px;
+    font-weight: 500; margin-top: 8px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.8);
+  }
 </style>
 </head>
 <body>
@@ -485,7 +503,6 @@
   </div>
 </div>
 
-<!-- МОДАЛКИ -->
 <div class="modal" id="searchModal">
   <div class="modal-body">
     <h3>Найти</h3>
@@ -513,15 +530,6 @@
     <div class="err" id="channelErr"></div>
     <button class="save" id="channelCreateBtn">Создать канал</button>
     <button class="close" id="channelClose">Отмена</button>
-  </div>
-</div>
-
-<div class="modal" id="joinChannelModal">
-  <div class="modal-body">
-    <h3 id="joinTitle">Канал</h3>
-    <p id="joinDesc"></p>
-    <button class="save" id="joinBtn">Подписаться</button>
-    <button class="close" id="joinClose">Закрыть</button>
   </div>
 </div>
 
@@ -636,23 +644,15 @@
   </div>
 </div>
 
-<div class="modal" id="newPostModal">
-  <div class="modal-body">
-    <h3>Новая публикация</h3>
-    <input type="file" id="postImageInput" accept="image/*" style="display:none">
-    <button class="save" id="postPickImage" style="background:#232e3c;color:#6ab2f2">📷 Выбрать фото</button>
-    <div id="postPreview" style="margin:10px 0;text-align:center"></div>
-    <textarea id="postTextInput" rows="3" maxlength="1000" placeholder="Подпись..."></textarea>
-    <div class="err" id="postErr"></div>
-    <button class="save" id="postPublish">Опубликовать</button>
-    <button class="close" id="postCancel">Отмена</button>
-  </div>
+<div class="gift-animation" id="giftAnimation">
+  <div class="gift-icon" id="giftAnimIcon">🎁</div>
+  <div class="gift-text" id="giftAnimText"></div>
 </div>
 
 <input type="file" id="avatarInput" accept="image/*" style="display:none">
 <input type="file" id="chatImageInput" accept="image/*" style="display:none">
 <input type="file" id="channelAvatarInput" accept="image/*" style="display:none">
- <script>
+<script>
 var token = localStorage.getItem('token');
 if (!token) { window.location.href = '/login.html'; }
 
@@ -696,6 +696,16 @@ function findNftById(nftId) {
   for (var i = 0; i < list.length; i++) if (list[i].id === nftId) return list[i];
   return null;
 }
+function showGiftAnimation(emoji, text) {
+  var el = $('giftAnimation');
+  if (!el) return;
+  $('giftAnimIcon').textContent = emoji;
+  $('giftAnimText').textContent = text || '';
+  el.classList.remove('on');
+  void el.offsetWidth;
+  el.classList.add('on');
+  setTimeout(function() { el.classList.remove('on'); }, 2100);
+}
 
 // ===== WEBSOCKET =====
 function connectWS() {
@@ -705,8 +715,17 @@ function connectWS() {
   ws.onmessage = function(e) {
     var data = JSON.parse(e.data);
     if (data.type === 'message') {
+      var _m = data.message;
+      if (_m && _m.from_user !== user.id) {
+        if (_m.nft) {
+          var _nftInfo = NFT_INFO[_m.nft.type] || {};
+          showGiftAnimation('🎁', 'Вам подарок: ' + (_nftInfo.name || 'NFT'));
+        } else if (_m.text && _m.text.indexOf('🎁 Подарок:') === 0) {
+          showGiftAnimation('🎁', 'Вам подарок');
+        }
+      }
       if (currentRoom && data.chatId === currentRoom.id) {
-        addMessage(data.message, null);
+        addMessage(_m, null);
         $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
       }
       if (currentTab === 'chats') renderChats();
@@ -718,9 +737,7 @@ function connectWS() {
         });
       }
     }
-    if (data.type === 'blocked') {
-      alert('Вы заблокированы');
-    }
+    if (data.type === 'blocked') { alert('Вы заблокированы'); }
   };
 }
 connectWS();
@@ -776,8 +793,7 @@ function renderChats() {
         var check = !isChannel ? creatorBadge(c.other && c.other.isCreator) : '';
         var el = document.createElement('div');
         el.className = 'chat-item';
-        var avStyle = '';
-        var avText = initial;
+        var avStyle = '', avText = initial;
         if (isChannel && c.avatar) { avStyle = ' style="background-image:url(' + c.avatar + ')"'; avText = ''; }
         else if (!isChannel && c.other && c.other.avatar) { avStyle = ' style="background-image:url(' + c.other.avatar + ')"'; avText = ''; }
         el.innerHTML = '<div class="chat-avatar' + (isChannel ? ' channel' : '') + '"' + avStyle + '>' + avText + '</div>' +
@@ -792,7 +808,8 @@ function renderChats() {
     })
     .catch(function(e) { main.innerHTML = '<div class="empty"><h2>Ошибка</h2><p>' + escapeHtml(e.message) + '</p></div>'; });
 }
- // ===== КОНТАКТЫ =====
+
+// ===== КОНТАКТЫ =====
 function renderContacts() {
   main.innerHTML = '<div class="empty"><h2>Загрузка...</h2></div>';
   fetch('/api/contacts', { headers: { 'Authorization': 'Bearer ' + token } })
@@ -817,8 +834,7 @@ function renderContacts() {
     })
     .catch(function() { main.innerHTML = '<div class="empty"><h2>Ошибка</h2></div>'; });
 }
-
-// ===== НАСТРОЙКИ =====
+ // ===== НАСТРОЙКИ =====
 function renderSettings() {
   var extras = (user.extraUsernames || []).length;
   main.innerHTML =
@@ -830,7 +846,6 @@ function renderSettings() {
     '<div class="settings-row" id="sShop"><div class="row-icon">🛍</div><div class="row-body"><div class="row-title">Магазин</div><div class="row-value">NFT и подарки</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sAbout"><div class="row-icon">ℹ️</div><div class="row-body"><div class="row-title">О приложении</div><div class="row-value">Версия 1.0.0</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row danger" id="sLogout"><div class="row-icon">🚪</div><div class="row-body"><div class="row-title">Выйти из аккаунта</div></div><div class="row-arrow">›</div></div>';
-
   $('sAccount').onclick = function() { setTab('profile'); };
   $('sUsernames').onclick = function() { openBuyUsername(); };
   $('sPrivacy').onclick = function() { openPrivacySettings(); };
@@ -839,32 +854,24 @@ function renderSettings() {
     if (user.isAdmin) {
       var add = prompt('Баланс: ' + (user.oxy || 0) + ' 🔮\nСколько добавить?', '10000');
       if (add) {
-        fetch('/api/oxy/topup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ amount: Number(add) })
-        }).then(function(r) { return r.json(); }).then(function(d) {
-          if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-          user.oxy = d.balance;
-          localStorage.setItem('user', JSON.stringify(user));
-          alert('Баланс: ' + d.balance + ' 🔮');
-          renderSettings();
-        });
+        fetch('/api/oxy/topup', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ amount: Number(add) }) })
+          .then(function(r) { return r.json(); }).then(function(d) {
+            if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+            user.oxy = d.balance; localStorage.setItem('user', JSON.stringify(user));
+            alert('Баланс: ' + d.balance + ' 🔮'); renderSettings();
+          });
       }
     } else alert('Баланс: ' + (user.oxy || 0) + ' 🔮');
   };
   $('sShop').onclick = function() { openShop(); };
   $('sAbout').onclick = function() { alert('Версия 1.0.0'); };
   $('sLogout').onclick = function() {
-    if (confirm('Выйти?')) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login.html';
-    }
+    if (confirm('Выйти?')) { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/login.html'; }
   };
 }
 
-// ===== КОНФИДЕНЦИАЛЬНОСТЬ =====
+function privacyLabel(v) { return v === 'all' ? 'Все' : v === 'contacts' ? 'Контакты' : 'Никто'; }
+
 function openPrivacySettings() {
   var opts = [
     { key: 'showLogin', title: 'Кто видит логин', val: user.showLogin || 'all' },
@@ -872,62 +879,34 @@ function openPrivacySettings() {
     { key: 'showBio', title: 'Кто видит «О себе»', val: user.showBio || 'all' },
     { key: 'showBirthday', title: 'Кто видит дату рождения', val: user.showBirthday || 'all' }
   ];
-  var html = '';
+  var html = '<div class="settings-row" id="backToSettings"><div class="row-icon">←</div><div class="row-body"><div class="row-title">Назад</div></div></div>';
   opts.forEach(function(o) {
-    html += '<div class="settings-row" data-priv="' + o.key + '">' +
-      '<div class="row-body"><div class="row-title">' + o.title + '</div>' +
-      '<div class="row-value">' + privacyLabel(o.val) + '</div></div>' +
-      '<div class="row-arrow">›</div></div>';
+    html += '<div class="settings-row" data-priv="' + o.key + '"><div class="row-body"><div class="row-title">' + o.title + '</div><div class="row-value">' + privacyLabel(o.val) + '</div></div><div class="row-arrow">›</div></div>';
   });
-  main.innerHTML = '<div class="settings-row" id="backToSettings"><div class="row-icon">←</div><div class="row-body"><div class="row-title">Назад в настройки</div></div></div>' + html;
+  main.innerHTML = html;
   $('backToSettings').onclick = function() { setTab('settings'); };
   main.querySelectorAll('[data-priv]').forEach(function(el) {
     el.onclick = function() {
       var key = el.getAttribute('data-priv');
-      var titles = {
-        showLogin: 'Кто видит логин',
-        showLastSeen: 'Кто видит время захода',
-        showBio: 'Кто видит «О себе»',
-        showBirthday: 'Кто видит дату рождения'
-      };
+      var titles = { showLogin: 'Кто видит логин', showLastSeen: 'Кто видит время захода', showBio: 'Кто видит «О себе»', showBirthday: 'Кто видит дату рождения' };
       openPrivacyOption(key, titles[key]);
     };
   });
 }
-
-function privacyLabel(v) {
-  return v === 'all' ? 'Все' : v === 'contacts' ? 'Контакты' : 'Никто';
-}
-
 function openPrivacyOption(key, titleText) {
   $('privacyTitle').textContent = titleText;
   var current = user[key] || 'all';
-  var options = [
-    { v: 'all', t: 'Все' },
-    { v: 'contacts', t: 'Контакты' },
-    { v: 'nobody', t: 'Никто' }
-  ];
-  var cont = $('privacyOptions');
-  cont.innerHTML = '';
-  options.forEach(function(o) {
+  var cont = $('privacyOptions'); cont.innerHTML = '';
+  [{ v: 'all', t: 'Все' }, { v: 'contacts', t: 'Контакты' }, { v: 'nobody', t: 'Никто' }].forEach(function(o) {
     var el = document.createElement('div');
     el.className = 'settings-row';
-    el.innerHTML = '<div class="row-body"><div class="row-title">' + o.t + '</div></div>' +
-      (o.v === current ? '<div class="row-icon" style="color:#6ab2f2">✓</div>' : '<div></div>');
+    el.innerHTML = '<div class="row-body"><div class="row-title">' + o.t + '</div></div>' + (o.v === current ? '<div class="row-icon" style="color:#6ab2f2">✓</div>' : '<div></div>');
     el.onclick = function() {
       var patch = {}; patch[key] = o.v;
-      fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify(patch)
-      }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.ok) {
-          user[key] = o.v;
-          localStorage.setItem('user', JSON.stringify(user));
-          $('privacyOptionModal').classList.remove('on');
-          openPrivacySettings();
-        }
-      });
+      fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(patch) })
+        .then(function(r) { return r.json(); }).then(function(d) {
+          if (d.ok) { user[key] = o.v; localStorage.setItem('user', JSON.stringify(user)); $('privacyOptionModal').classList.remove('on'); openPrivacySettings(); }
+        });
     };
     cont.appendChild(el);
   });
@@ -935,47 +914,26 @@ function openPrivacyOption(key, titleText) {
 }
 $('privacyClose').onclick = function() { $('privacyOptionModal').classList.remove('on'); };
 
-// ===== 2FA =====
-function open2FASettings() {
-  $('twofaPass').value = '';
-  $('twofaWord').value = '';
-  $('twofaErr').textContent = '';
-  $('twofaModal').classList.add('on');
-}
+function open2FASettings() { $('twofaPass').value = ''; $('twofaWord').value = ''; $('twofaErr').textContent = ''; $('twofaModal').classList.add('on'); }
 $('twofaClose').onclick = function() { $('twofaModal').classList.remove('on'); };
 $('twofaSave').onclick = function() {
-  var pass = $('twofaPass').value.trim();
-  var word = $('twofaWord').value.trim();
+  var pass = $('twofaPass').value.trim(); var word = $('twofaWord').value.trim();
   if (!pass && !word) { $('twofaErr').textContent = 'Введите пароль или слово'; return; }
-  fetch('/api/2fa/setup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ password: pass, word: word })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('twofaErr').textContent = d.error || 'Ошибка'; return; }
-    user.twofaSet = true;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('twofaModal').classList.remove('on');
-    alert('2FA включена');
-    renderSettings();
-  });
+  fetch('/api/2fa/setup', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ password: pass, word: word }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { $('twofaErr').textContent = d.error || 'Ошибка'; return; }
+      user.twofaSet = true; localStorage.setItem('user', JSON.stringify(user)); $('twofaModal').classList.remove('on'); alert('2FA включена'); renderSettings();
+    });
 };
 $('twofaRemove').onclick = function() {
   if (!confirm('Убрать 2FA?')) return;
-  fetch('/api/2fa/setup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ password: '', word: '' })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert('Ошибка'); return; }
-    user.twofaSet = false;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('twofaModal').classList.remove('on');
-    alert('2FA отключена');
-    renderSettings();
-  });
+  fetch('/api/2fa/setup', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ password: '', word: '' }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert('Ошибка'); return; }
+      user.twofaSet = false; localStorage.setItem('user', JSON.stringify(user)); $('twofaModal').classList.remove('on'); alert('2FA отключена'); renderSettings();
+    });
 };
- // ===== ПРОФИЛЬ =====
+
 function renderProfile() {
   var name = user.name || 'Без имени';
   var username = user.username ? '@' + user.username : '@без_юзернейма';
@@ -983,10 +941,7 @@ function renderProfile() {
   var avStyle = user.avatar ? ' style="background-image:url(' + user.avatar + ')"' : '';
   var avText = user.avatar ? '' : initial;
   var check = creatorBadge(user.isCreator);
-  var bio = user.bio || '';
-  var login = user.login || '';
-  var birthday = user.birthday || '';
-
+  var bio = user.bio || ''; var login = user.login || ''; var birthday = user.birthday || '';
   main.innerHTML =
     '<div class="profile-top">' +
       '<div class="profile-avatar" id="pAvatar"' + avStyle + '>' + avText + '<div class="cam">📷</div></div>' +
@@ -997,12 +952,14 @@ function renderProfile() {
     '<div class="profile-actions">' +
       '<div class="profile-action" id="pPhoto"><div class="ico">📷</div><div class="lbl">Фото</div></div>' +
       '<div class="profile-action" id="pEdit"><div class="ico">✏️</div><div class="lbl">Изменить</div></div>' +
+      '<div class="profile-action" id="pUsername"><div class="ico">@</div><div class="lbl">Юзернейм</div></div>' +
       '<div class="profile-action" id="pSettings"><div class="ico">⚙️</div><div class="lbl">Настройки</div></div>' +
     '</div>' +
     '<div class="profile-info">' +
       (login ? '<div class="profile-info-row"><div class="val">' + escapeHtml(login) + '</div><div class="lbl">Логин</div></div>' : '') +
       '<div class="profile-info-row"><div class="val">' + (bio ? escapeHtml(bio) : 'Не задано') + '</div><div class="lbl">О себе</div></div>' +
       '<div class="profile-info-row"><div class="val">' + escapeHtml(username) + '</div><div class="lbl">Имя пользователя</div></div>' +
+      ((user.extraUsernames && user.extraUsernames.length) ? '<div class="profile-info-row"><div class="val">' + user.extraUsernames.map(function(x) { return '@' + escapeHtml(x); }).join(', ') + '</div><div class="lbl">Дополнительные юзернеймы</div></div>' : '') +
       '<div class="profile-info-row"><div class="val">' + (user.id || '?') + '</div><div class="lbl">ID</div></div>' +
       '<div class="profile-info-row"><div class="val">' + (birthday ? escapeHtml(birthday) : 'Не задано') + '</div><div class="lbl">День рождения</div></div>' +
     '</div>' +
@@ -1012,22 +969,18 @@ function renderProfile() {
       '<button class="profile-tab" data-ptab="gifts">Подарки</button>' +
     '</div>' +
     '<div class="profile-tab-content" id="profileTabContent"></div>';
-
   $('pAvatar').onclick = function() { $('avatarInput').click(); };
   $('pPhoto').onclick = function() { $('avatarInput').click(); };
   $('pEdit').onclick = function() { openEditProfile(); };
+  $('pUsername').onclick = function() { openEditUsername(); };
   $('pSettings').onclick = function() { setTab('settings'); };
-
   var cc = main.querySelector('.creator-check');
   if (cc) cc.onclick = function() { $('creatorModal').classList.add('on'); };
-
   currentProfileTab = 'publications';
   document.querySelectorAll('.profile-tab').forEach(function(b) {
     b.onclick = function() {
       currentProfileTab = b.getAttribute('data-ptab');
-      document.querySelectorAll('.profile-tab').forEach(function(x) {
-        x.classList.toggle('on', x.getAttribute('data-ptab') === currentProfileTab);
-      });
+      document.querySelectorAll('.profile-tab').forEach(function(x) { x.classList.toggle('on', x.getAttribute('data-ptab') === currentProfileTab); });
       renderProfileTabContent();
     };
   });
@@ -1037,31 +990,22 @@ function renderProfile() {
 function renderProfileTabContent() {
   var c = $('profileTabContent');
   if (!c) return;
-
   if (currentProfileTab === 'publications') {
-    c.innerHTML = '<div class="profile-tab-empty">' +
-      '<h3>Публикаций пока нет...</h3>' +
-      '<p>Публикуйте фотографии и видео в своём профиле</p>' +
-      '<button class="profile-add-btn" id="addPostBtn">📷 Добавить</button></div>';
+    c.innerHTML = '<div class="profile-tab-empty"><h3>Публикаций пока нет...</h3><p>Публикуйте фотографии в своём профиле</p><button class="profile-add-btn" id="addPostBtn">📷 Добавить</button></div>';
     $('addPostBtn').onclick = function() { openNewPost(); };
-    loadPosts(c);
     return;
   }
   if (currentProfileTab === 'archive') {
-    c.innerHTML = '<div class="profile-tab-empty"><h3>Архив пуст</h3><p>Здесь будут архивные публикации</p></div>';
+    c.innerHTML = '<div class="profile-tab-empty"><h3>Архив пуст</h3></div>';
     return;
   }
-  // gifts
-  var nfts = user.nfts || [];
-  var gifts = user.gifts || [];
+  var nfts = user.nfts || []; var gifts = user.gifts || [];
   var html = '';
   if (nfts.length || gifts.length) {
     html += '<div class="gift-grid">';
     nfts.forEach(function(n) {
       var info = NFT_INFO[n.type] || {};
-      html += '<div class="gift-card nft" style="background-image:url(' + info.img + ')" data-nft="' + n.id + '">' +
-        '<div class="num">#' + n.number + '</div>' +
-        '<div class="gift-owner">' + (info.name || n.type) + '</div></div>';
+      html += '<div class="gift-card nft" style="background-image:url(' + info.img + ')" data-nft="' + n.id + '"><div class="num">#' + n.number + '</div><div class="gift-owner">' + (info.name || n.type) + '</div></div>';
     });
     gifts.forEach(function(g, i) {
       var info = GIFTS_ORD[g.giftId] || {};
@@ -1072,166 +1016,28 @@ function renderProfileTabContent() {
     html = '<div class="empty"><div class="icon">🎁</div><h2>Пока пусто</h2><p>Купи в магазине</p></div>';
   }
   c.innerHTML = html;
-
-  c.querySelectorAll('[data-nft]').forEach(function(el) {
-    el.onclick = function() { openNftAction(el.getAttribute('data-nft')); };
-  });
-  c.querySelectorAll('[data-gift]').forEach(function(el) {
-    el.onclick = function() { sellOrdinaryGift(Number(el.getAttribute('data-gift'))); };
-  });
-}
-
-function loadPosts(container) {
-  fetch('/api/posts?id=' + user.id, { headers: { 'Authorization': 'Bearer ' + token } })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (!data.posts || !data.posts.length) return;
-      var wrap = document.createElement('div');
-      wrap.style.marginTop = '16px';
-      data.posts.forEach(function(p) {
-        var el = document.createElement('div');
-        el.className = 'gift-card';
-        el.style.minHeight = 'auto';
-        el.style.display = 'block';
-        el.style.padding = '12px';
-        el.style.textAlign = 'left';
-        el.innerHTML = (p.image ? '<img src="' + p.image + '" style="width:100%;border-radius:10px;margin-bottom:8px">' : '') +
-          (p.text ? '<div style="font-size:14px">' + escapeHtml(p.text) + '</div>' : '') +
-          '<div style="font-size:11px;color:#7d8e9e;margin-top:6px">' + new Date(p.ts).toLocaleString('ru-RU') + '</div>' +
-          '<div data-del="' + p.id + '" style="font-size:12px;color:#e85c5c;margin-top:6px;cursor:pointer">Удалить</div>';
-        el.querySelector('[data-del]').onclick = function() {
-          if (!confirm('Удалить?')) return;
-          fetch('/api/posts/delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ postId: p.id })
-          }).then(function() { el.remove(); });
-        };
-        wrap.appendChild(el);
-      });
-      container.appendChild(wrap);
-    });
-}
-
-// ===== ПУБЛИКАЦИИ =====
-var postImageData = null;
-function openNewPost() {
-  postImageData = null;
-  $('postPreview').innerHTML = '';
-  $('postTextInput').value = '';
-  $('postErr').textContent = '';
-  $('newPostModal').classList.add('on');
-}
-$('postCancel').onclick = function() { $('newPostModal').classList.remove('on'); };
-$('postPickImage').onclick = function() { $('postImageInput').click(); };
-$('postImageInput').onchange = function() {
-  var f = $('postImageInput').files[0];
-  if (!f) return;
-  var reader = new FileReader();
-  reader.onload = function() {
-    fetch('/api/upload-post', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/octet-stream', 'Authorization': 'Bearer ' + token },
-      body: reader.result
-    }).then(function(r) { return r.json(); }).then(function(d) {
-      if (!d.ok) { $('postErr').textContent = d.error || 'Ошибка'; return; }
-      postImageData = d.image;
-      $('postPreview').innerHTML = '<img src="' + d.image + '" style="max-width:100%;max-height:200px;border-radius:10px">';
-    });
-  };
-  reader.readAsArrayBuffer(f);
-};
-$('postPublish').onclick = function() {
-  var text = $('postTextInput').value.trim();
-  if (!postImageData && !text) { $('postErr').textContent = 'Добавьте фото или текст'; return; }
-  fetch('/api/posts/create', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ image: postImageData, text: text })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('postErr').textContent = d.error || 'Ошибка'; return; }
-    $('newPostModal').classList.remove('on');
-    renderProfileTabContent();
-  });
-};
-
-// ===== РЕДАКТИРОВАНИЕ ПРОФИЛЯ =====
-function openEditProfile() {
-  $('epName').value = user.name || '';
-  $('epBio').value = user.bio || '';
-  $('epBirthday').value = user.birthday || '';
-  $('epErr').textContent = '';
-  $('editProfileModal').classList.add('on');
-  $('epName').focus();
-}
-$('epClose').onclick = function() { $('editProfileModal').classList.remove('on'); };
-$('epSave').onclick = function() {
-  var name = $('epName').value.trim();
-  var bio = $('epBio').value.trim();
-  var birthday = $('epBirthday').value.trim();
-  if (!name) { $('epErr').textContent = 'Введите имя'; return; }
-  if (bio.length > 100) { $('epErr').textContent = 'О себе: макс 100 символов'; return; }
-  fetch('/api/profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ name: name, bio: bio, birthday: birthday })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('epErr').textContent = d.error || 'Ошибка'; return; }
-    user.name = name; user.bio = bio; user.birthday = birthday;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('editProfileModal').classList.remove('on');
-    renderProfile();
-  });
-};
-
-$('avatarInput').onchange = function() {
-  var file = $('avatarInput').files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function() {
-    fetch('/api/avatar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/octet-stream', 'Authorization': 'Bearer ' + token },
-      body: reader.result
-    }).then(function(r) { return r.json(); }).then(function(d) {
-      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-      user.avatar = d.avatar;
-      localStorage.setItem('user', JSON.stringify(user));
-      $('avatarInput').value = '';
-      renderProfile();
-    });
-  };
-  reader.readAsArrayBuffer(file);
-};
+  c.querySelectorAll('[data-nft]').forEach(function(el) { el.onclick = function() { openNftAction(el.getAttribute('data-nft')); }; });
+  c.querySelectorAll('[data-gift]').forEach(function(el) { el.onclick = function() { sellOrdinaryGift(Number(el.getAttribute('data-gift'))); }; });
+ }
  // ===== МАГАЗИН =====
 function openShop() {
   $('shopModal').classList.add('on');
   $('shopTitle').textContent = 'Магазин — ' + (user.oxy || 0) + ' 🔮';
-  var grid = $('shopGrid');
-  grid.innerHTML = '';
+  var grid = $('shopGrid'); grid.innerHTML = '';
   Object.keys(NFT_INFO).forEach(function(type) {
     var info = NFT_INFO[type];
     var card = document.createElement('div');
     card.className = 'shop-card';
-    card.innerHTML = '<div class="shop-img" style="background-image:url(' + info.img + ')"></div>' +
-      '<div class="shop-name">' + info.name + '</div>' +
-      '<div class="shop-price">' + info.price + ' 🔮</div>';
+    card.innerHTML = '<div class="shop-img" style="background-image:url(' + info.img + ')"></div><div class="shop-name">' + info.name + '</div><div class="shop-price">' + info.price + ' 🔮</div>';
     card.onclick = function() {
       if (!confirm('Купить ' + info.name + ' за ' + info.price + ' 🔮?')) return;
-      fetch('/api/nft/buy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ type: type })
-      }).then(function(r) { return r.json(); }).then(function(d) {
-        if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-        user.oxy = d.balance;
-        if (!user.nfts) user.nfts = [];
-        user.nfts.push(d.nft);
-        localStorage.setItem('user', JSON.stringify(user));
-        alert('Куплено! NFT #' + d.nft.number);
-        $('shopModal').classList.remove('on');
-        if (currentTab === 'profile') renderProfile();
-      });
+      fetch('/api/nft/buy', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ type: type }) })
+        .then(function(r) { return r.json(); }).then(function(d) {
+          if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+          user.oxy = d.balance; if (!user.nfts) user.nfts = []; user.nfts.push(d.nft);
+          localStorage.setItem('user', JSON.stringify(user)); alert('Куплено! NFT #' + d.nft.number); $('shopModal').classList.remove('on');
+          if (currentTab === 'profile') renderProfile();
+        });
     };
     grid.appendChild(card);
   });
@@ -1239,10 +1045,8 @@ function openShop() {
     var info = GIFTS_ORD[gid];
     var card = document.createElement('div');
     card.className = 'shop-card';
-    card.innerHTML = '<div class="shop-emoji">' + info.emoji + '</div>' +
-      '<div class="shop-name">' + info.name + '</div>' +
-      '<div class="shop-price">' + info.price + ' 🔮</div>';
-    card.onclick = function() { alert('Обычные подарки отправляются из чата'); };
+    card.innerHTML = '<div class="shop-emoji">' + info.emoji + '</div><div class="shop-name">' + info.name + '</div><div class="shop-price">' + info.price + ' 🔮</div>';
+    card.onclick = function() { alert('Обычные подарки — из чата'); };
     grid.appendChild(card);
   });
 }
@@ -1251,273 +1055,204 @@ $('shopClose').onclick = function() { $('shopModal').classList.remove('on'); };
 // ===== NFT ДЕЙСТВИЯ =====
 var currentNftId = null;
 function openNftAction(nftId) {
-  var nft = findNftById(nftId);
-  if (!nft) return;
+  var nft = findNftById(nftId); if (!nft) return;
   currentNftId = nftId;
   var info = NFT_INFO[nft.type] || {};
   $('nftActionImg').style.backgroundImage = 'url(' + info.img + ')';
   $('nftActionTitle').textContent = info.name + ' #' + nft.number;
   $('nftActionDesc').textContent = 'Что сделать?';
-  var isOn = user.profileNft === nftId;
-  $('nftActionProfile').textContent = isOn ? '✓ Убрать из профиля' : 'Добавить в профиль';
+  $('nftActionProfile').textContent = user.profileNft === nftId ? '✓ Убрать из профиля' : 'Добавить в профиль';
   $('nftActionModal').classList.add('on');
 }
 $('nftActionClose').onclick = function() { $('nftActionModal').classList.remove('on'); };
-
 $('nftActionProfile').onclick = function() {
   if (!currentNftId) return;
-  var isOn = user.profileNft === currentNftId;
-  var newId = isOn ? null : currentNftId;
-  fetch('/api/nft/profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ nftId: newId })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    user.profileNft = newId;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('nftActionModal').classList.remove('on');
-    renderProfile();
-  });
+  var newId = user.profileNft === currentNftId ? null : currentNftId;
+  fetch('/api/nft/profile', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ nftId: newId }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      user.profileNft = newId; localStorage.setItem('user', JSON.stringify(user));
+      $('nftActionModal').classList.remove('on'); renderProfile();
+    });
 };
-
 $('nftActionGift').onclick = function() {
   if (!currentNftId) return;
-  var to = prompt('Введите @юзернейм получателя');
-  if (!to) return;
-  fetch('/api/search?q=' + encodeURIComponent(to.toLowerCase().trim()), {
-    headers: { 'Authorization': 'Bearer ' + token }
-  }).then(function(r) { return r.json(); }).then(function(data) {
-    if (!data.users || !data.users.length) { alert('Не найдено'); return; }
-    var u = data.users[0];
-    fetch('/api/nft/give', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ toUserId: u.id, nftId: currentNftId })
-    }).then(function(r) { return r.json(); }).then(function(d) {
-      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-      user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
-      if (user.profileNft === currentNftId) user.profileNft = null;
-      localStorage.setItem('user', JSON.stringify(user));
-      $('nftActionModal').classList.remove('on');
-      alert('Подарок передан @' + u.username);
-      renderProfile();
+  var to = prompt('Введите @юзернейм получателя'); if (!to) return;
+  fetch('/api/search?q=' + encodeURIComponent(to.toLowerCase().trim()), { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); }).then(function(data) {
+      if (!data.users || !data.users.length) { alert('Не найдено'); return; }
+      var u = data.users[0];
+      fetch('/api/nft/give', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ toUserId: u.id, nftId: currentNftId }) })
+        .then(function(r) { return r.json(); }).then(function(d) {
+          if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+          user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
+          if (user.profileNft === currentNftId) user.profileNft = null;
+          localStorage.setItem('user', JSON.stringify(user)); $('nftActionModal').classList.remove('on');
+          alert('Передано @' + u.username); renderProfile();
+        });
     });
-  });
 };
-
 $('nftActionSell').onclick = function() {
   if (!currentNftId) return;
-  var nft = findNftById(currentNftId);
-  var info = NFT_INFO[nft.type] || {};
-  var commission = Math.ceil(info.price * 0.05);
-  var payout = info.price - commission;
+  var nft = findNftById(currentNftId); var info = NFT_INFO[nft.type] || {};
+  var commission = Math.ceil(info.price * 0.05); var payout = info.price - commission;
   if (!confirm('Продать ' + info.name + ' #' + nft.number + '?\nПолучите: ' + payout + ' 🔮')) return;
-  fetch('/api/nft/sell', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ nftId: currentNftId })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
-    user.oxy = d.balance;
-    if (user.profileNft === currentNftId) user.profileNft = null;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('nftActionModal').classList.remove('on');
-    alert('Продано! +' + d.payout + ' 🔮');
-    renderProfile();
-  });
+  fetch('/api/nft/sell', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ nftId: currentNftId }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
+      user.oxy = d.balance; if (user.profileNft === currentNftId) user.profileNft = null;
+      localStorage.setItem('user', JSON.stringify(user)); $('nftActionModal').classList.remove('on');
+      alert('Продано! +' + d.payout + ' 🔮'); renderProfile();
+    });
 };
-
 function sellOrdinaryGift(index) {
   if (!confirm('Продать подарок? Комиссия 5%.')) return;
-  fetch('/api/gift/sell', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ index: index })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    user.gifts.splice(index, 1);
-    user.oxy = d.balance;
-    localStorage.setItem('user', JSON.stringify(user));
-    alert('Продано! +' + d.payout + ' 🔮');
-    renderProfileTabContent();
-  });
+  fetch('/api/gift/sell', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ index: index }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      user.gifts.splice(index, 1); user.oxy = d.balance;
+      localStorage.setItem('user', JSON.stringify(user)); alert('Продано! +' + d.payout + ' 🔮'); renderProfileTabContent();
+    });
 }
 
-// ===== ДОП. ЮЗЕРНЕЙМЫ =====
+// ===== ЮЗЕРНЕЙМЫ =====
 function openBuyUsername() {
   fetch('/api/username/price', { headers: { 'Authorization': 'Bearer ' + token } })
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
+    .then(function(r) { return r.json(); }).then(function(d) {
       if (d.max <= d.count) { alert('Максимум 5'); return; }
       $('buyUsernamePriceText').textContent = 'Цена: ' + d.price + ' 🔮 (' + d.count + ' / ' + d.max + ')';
-      $('buyUsernameInput').value = '';
-      $('buyUsernameErr').textContent = '';
-      $('buyUsernameModal').classList.add('on');
-      $('buyUsernameInput').focus();
+      $('buyUsernameInput').value = ''; $('buyUsernameErr').textContent = '';
+      $('buyUsernameModal').classList.add('on'); $('buyUsernameInput').focus();
     });
 }
 $('buyUsernameClose').onclick = function() { $('buyUsernameModal').classList.remove('on'); };
 $('buyUsernameSave').onclick = function() {
-  var username = $('buyUsernameInput').value.trim().toLowerCase();
-  if (!/^[a-z0-9_]{5,16}$/.test(username)) { $('buyUsernameErr').textContent = '5–16, латиница, цифры, _'; return; }
-  fetch('/api/username/buy', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ username: username })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('buyUsernameErr').textContent = d.error || 'Ошибка'; return; }
-    user.oxy = d.balance;
-    if (!user.extraUsernames) user.extraUsernames = [];
-    user.extraUsernames.push(d.username);
-    localStorage.setItem('user', JSON.stringify(user));
-    $('buyUsernameModal').classList.remove('on');
-    alert('Юзернейм @' + d.username + ' добавлен');
-    renderSettings();
-  });
+  var u = $('buyUsernameInput').value.trim().toLowerCase();
+  if (!/^[a-z0-9_]{5,16}$/.test(u)) { $('buyUsernameErr').textContent = '5–16, латиница, цифры, _'; return; }
+  fetch('/api/username/buy', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ username: u }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { $('buyUsernameErr').textContent = d.error || 'Ошибка'; return; }
+      user.oxy = d.balance; if (!user.extraUsernames) user.extraUsernames = []; user.extraUsernames.push(d.username);
+      localStorage.setItem('user', JSON.stringify(user)); $('buyUsernameModal').classList.remove('on');
+      alert('@' + d.username + ' добавлен'); renderSettings();
+    });
 };
-
 function openEditUsername() {
-  $('editUsernameInput').value = user.username || '';
-  $('editUsernameErr').textContent = '';
-  $('editUsernameModal').classList.add('on');
-  $('editUsernameInput').focus();
+  $('editUsernameInput').value = user.username || ''; $('editUsernameErr').textContent = '';
+  $('editUsernameModal').classList.add('on'); $('editUsernameInput').focus();
 }
 $('editUsernameClose').onclick = function() { $('editUsernameModal').classList.remove('on'); };
 $('editUsernameSave').onclick = function() {
-  var username = $('editUsernameInput').value.trim().toLowerCase();
-  if (!/^[a-z0-9_]{5,16}$/.test(username)) { $('editUsernameErr').textContent = '5–16, латиница, цифры, _'; return; }
-  fetch('/api/profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ username: username })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('editUsernameErr').textContent = d.error || 'Ошибка'; return; }
-    user.username = username;
-    localStorage.setItem('user', JSON.stringify(user));
-    $('editUsernameModal').classList.remove('on');
-    renderProfile();
-  });
+  var u = $('editUsernameInput').value.trim().toLowerCase();
+  if (!/^[a-z0-9_]{5,16}$/.test(u)) { $('editUsernameErr').textContent = '5–16, латиница, цифры, _'; return; }
+  fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ username: u }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { $('editUsernameErr').textContent = d.error || 'Ошибка'; return; }
+      user.username = u; localStorage.setItem('user', JSON.stringify(user));
+      $('editUsernameModal').classList.remove('on'); renderProfile();
+    });
 };
 
-// ===== ПОИСК =====
+// ===== РЕДАКТИРОВАНИЕ ПРОФИЛЯ =====
+function openEditProfile() {
+  $('epName').value = user.name || ''; $('epBio').value = user.bio || ''; $('epBirthday').value = user.birthday || '';
+  $('epErr').textContent = ''; $('editProfileModal').classList.add('on'); $('epName').focus();
+}
+$('epClose').onclick = function() { $('editProfileModal').classList.remove('on'); };
+$('epSave').onclick = function() {
+  var name = $('epName').value.trim(); var bio = $('epBio').value.trim(); var birthday = $('epBirthday').value.trim();
+  if (!name) { $('epErr').textContent = 'Введите имя'; return; }
+  if (bio.length > 100) { $('epErr').textContent = 'О себе: макс 100'; return; }
+  fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ name: name, bio: bio, birthday: birthday }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { $('epErr').textContent = d.error || 'Ошибка'; return; }
+      user.name = name; user.bio = bio; user.birthday = birthday;
+      localStorage.setItem('user', JSON.stringify(user)); $('editProfileModal').classList.remove('on'); renderProfile();
+    });
+};
+$('avatarInput').onchange = function() {
+  var file = $('avatarInput').files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    fetch('/api/avatar', { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'Authorization': 'Bearer ' + token }, body: reader.result })
+      .then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+        user.avatar = d.avatar; localStorage.setItem('user', JSON.stringify(user)); $('avatarInput').value = ''; renderProfile();
+      });
+  };
+  reader.readAsArrayBuffer(file);
+};
+ // ===== ПОИСК =====
 $('searchBtn').onclick = function() {
-  $('searchModal').classList.add('on');
-  $('searchInput').value = '';
-  $('searchResults').innerHTML = '';
-  $('searchInput').focus();
+  $('searchModal').classList.add('on'); $('searchInput').value = ''; $('searchResults').innerHTML = ''; $('searchInput').focus();
 };
 $('searchClose').onclick = function() { $('searchModal').classList.remove('on'); };
-
 $('searchInput').addEventListener('input', function() {
-  var q = $('searchInput').value.trim().toLowerCase();
-  var results = $('searchResults');
+  var q = $('searchInput').value.trim().toLowerCase(); var results = $('searchResults');
   if (!q) { results.innerHTML = ''; return; }
   fetch('/api/search?q=' + encodeURIComponent(q), { headers: { 'Authorization': 'Bearer ' + token } })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      results.innerHTML = '';
-      var hasAny = false;
-      if (data.users && data.users.length) {
+    .then(function(r) { return r.json(); }).then(function(data) {
+      results.innerHTML = ''; var hasAny = false;
+      (data.users || []).forEach(function(u) {
         hasAny = true;
-        data.users.forEach(function(u) {
-          var check = creatorBadge(u.isCreator);
-          var el = document.createElement('div');
-          el.className = 'search-result';
-          el.style.cssText = 'padding:10px;margin-top:8px;background:#232e3c;border-radius:12px;display:flex;align-items:center;gap:12px';
-          el.innerHTML = '<div style="flex:1"><div style="font-size:15px;font-weight:500">👤 ' + escapeHtml(u.name || 'Без имени') + check + '</div>' +
-            '<div style="font-size:13px;color:#7d8e9e">@' + escapeHtml(u.username || '') + '</div></div>' +
-            '<button style="width:auto;padding:8px 16px;background:#6ab2f2;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer">Написать</button>';
-          el.querySelector('button').onclick = function() {
-            fetch('/api/chats/create', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-              body: JSON.stringify({ userId: u.id })
-            }).then(function(r) { return r.json(); }).then(function(rd) {
+        var check = creatorBadge(u.isCreator);
+        var el = document.createElement('div');
+        el.style.cssText = 'padding:10px;margin-top:8px;background:#232e3c;border-radius:12px;display:flex;align-items:center;gap:12px';
+        el.innerHTML = '<div style="flex:1"><div style="font-size:15px;font-weight:500">👤 ' + escapeHtml(u.name || 'Без имени') + check + '</div><div style="font-size:13px;color:#7d8e9e">@' + escapeHtml(u.username || '') + '</div></div><button style="padding:8px 16px;background:#6ab2f2;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer">Написать</button>';
+        el.querySelector('button').onclick = function() {
+          fetch('/api/chats/create', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ userId: u.id }) })
+            .then(function(r) { return r.json(); }).then(function(rd) {
               if (!rd.ok) { alert(rd.error || 'Ошибка'); return; }
-              $('searchModal').classList.remove('on');
-              if (currentTab !== 'chats') setTab('chats');
-              openRoom(rd.chatId, u.name || u.username, { other: u });
+              $('searchModal').classList.remove('on'); if (currentTab !== 'chats') setTab('chats'); openRoom(rd.chatId, u.name || u.username, { other: u });
             });
-          };
-          results.appendChild(el);
-        });
-      }
-      if (data.channels && data.channels.length) {
+        };
+        results.appendChild(el);
+      });
+      (data.channels || []).forEach(function(ch) {
         hasAny = true;
-        data.channels.forEach(function(ch) {
-          var el = document.createElement('div');
-          el.style.cssText = 'padding:10px;margin-top:8px;background:#232e3c;border-radius:12px;display:flex;align-items:center;gap:12px';
-          el.innerHTML = '<div style="flex:1"><div style="font-size:15px;font-weight:500">📢 ' + escapeHtml(ch.title) + '</div>' +
-            '<div style="font-size:13px;color:#7d8e9e">@' + escapeHtml(ch.username || '') + ' · ' + ch.subscribers + ' подписчиков</div></div>' +
-            '<button style="width:auto;padding:8px 16px;background:#4a7ee8;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer">Открыть</button>';
-          el.querySelector('button').onclick = function() {
-            $('searchModal').classList.remove('on');
-            openRoom(ch.id, '📢 ' + ch.title, { chat: ch });
-          };
-          results.appendChild(el);
-        });
-      }
-      if (!hasAny) {
-        results.innerHTML = '<div style="color:#5a6a7a;font-size:13px;text-align:center;margin-top:12px">Ничего не найдено</div>';
-      }
+        var el = document.createElement('div');
+        el.style.cssText = 'padding:10px;margin-top:8px;background:#232e3c;border-radius:12px;display:flex;align-items:center;gap:12px';
+        el.innerHTML = '<div style="flex:1"><div style="font-size:15px;font-weight:500">📢 ' + escapeHtml(ch.title) + '</div><div style="font-size:13px;color:#7d8e9e">@' + escapeHtml(ch.username || '') + ' · ' + ch.subscribers + '</div></div><button style="padding:8px 16px;background:#4a7ee8;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer">Открыть</button>';
+        el.querySelector('button').onclick = function() { $('searchModal').classList.remove('on'); openRoom(ch.id, '📢 ' + ch.title, { chat: ch }); };
+        results.appendChild(el);
+      });
+      if (!hasAny) results.innerHTML = '<div style="color:#5a6a7a;font-size:13px;text-align:center;margin-top:12px">Ничего не найдено</div>';
     });
 });
-       // ===== КОМНАТА =====
-var replyToMsg = null;
 
+// ===== КОМНАТА =====
+var replyToMsg = null;
 function openRoom(chatId, name, chatData) {
   currentRoom = { id: chatId, name: name, data: chatData || {} };
-  replyToMsg = null;
-  $('replyPreview').classList.remove('on');
-  $('roomTitle').textContent = name;
-  $('roomSub').textContent = 'Загрузка...';
+  replyToMsg = null; $('replyPreview').classList.remove('on');
+  $('roomTitle').textContent = name; $('roomSub').textContent = 'Загрузка...';
   $('roomMessages').innerHTML = '<div style="color:#5a6a7a;text-align:center;padding:12px">Загрузка...</div>';
   $('roomScreen').classList.add('on');
   fetch('/api/messages?chatId=' + chatId, { headers: { 'Authorization': 'Bearer ' + token } })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+    .then(function(r) { return r.json(); }).then(function(data) {
       currentRoom.data = data.chat || {};
       var isChannel = data.chat && data.chat.type === 'channel';
       var isOwner = data.chat && data.chat.ownerId === user.id;
-      if (isChannel) {
-        $('roomSub').textContent = (data.chat.subscribersCount || 0) + ' подписчиков';
-      } else {
-        var o = (data.chat && data.chat.other) || currentRoom.data.other;
-        if (currentRoom.data.other) $('roomSub').textContent = currentRoom.data.other.online ? 'в сети' : 'был(а) недавно';
-      }
+      if (isChannel) $('roomSub').textContent = (data.chat.subscribersCount || 0) + ' подписчиков';
+      else if (currentRoom.data.other) $('roomSub').textContent = currentRoom.data.other.online ? 'в сети' : 'был(а) недавно';
       $('roomMessages').innerHTML = '';
-      if (data.messages) {
-        data.messages.forEach(function(m) { addMessage(m, data.messages); });
-      }
+      if (data.messages) data.messages.forEach(function(m) { addMessage(m, data.messages); });
       $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
-      // поле ввода — только если можно писать
       var canWrite = !isChannel || isOwner;
       $('roomInput').style.display = canWrite ? '' : 'none';
       $('roomSend').style.display = canWrite ? '' : 'none';
       $('giftBtn').style.display = canWrite ? '' : 'none';
-    })
-    .catch(function() {
-      $('roomMessages').innerHTML = '<div style="color:#e85c5c;text-align:center;padding:12px">Ошибка</div>';
     });
 }
-
 function addMessage(m, allMessages) {
   if (m.nft) {
-    var info = NFT_INFO[m.nft.type] || {};
-    var own = m.from_user === user.id;
+    var info = NFT_INFO[m.nft.type] || {}; var own = m.from_user === user.id;
     var div = document.createElement('div');
     div.className = 'nft-card' + (own ? ' own' : '');
     div.style.backgroundImage = 'url(' + info.img + ')';
-    var fromName = own ? 'вас' : 'собеседника';
-    div.innerHTML =
-      '<div class="nft-num">#' + (m.nft.number || '?') + '</div>' +
-      '<div class="nft-label">подарок</div>' +
-      '<div class="nft-img" style="background-image:url(' + info.img + ')"></div>' +
-      '<div class="nft-from">Подарок от ' + escapeHtml(fromName) + '</div>';
-    $('roomMessages').appendChild(div);
-    return;
+    div.innerHTML = '<div class="nft-num">#' + (m.nft.number || '?') + '</div><div class="nft-label">подарок</div><div class="nft-img" style="background-image:url(' + info.img + ')"></div><div class="nft-from">Подарок от ' + escapeHtml(own ? 'вас' : 'собеседника') + '</div>';
+    $('roomMessages').appendChild(div); return;
   }
   var own2 = m.from_user === user.id;
   var div2 = document.createElement('div');
@@ -1532,18 +1267,13 @@ function addMessage(m, allMessages) {
     }
   }
   html += escapeHtml(m.text || '') + '<div class="meta">' + fmtTime(m.created_at) + '</div>';
-  div2.innerHTML = html;
-  attachSwipeReply(div2, m);
-  $('roomMessages').appendChild(div2);
+  div2.innerHTML = html; attachSwipeReply(div2, m); $('roomMessages').appendChild(div2);
 }
-
 function attachSwipeReply(el, m) {
   var startX = 0, startY = 0, currentX = 0, isDragging = false, isHorizontal = false;
   el.addEventListener('touchstart', function(e) {
     if (e.touches.length !== 1) return;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    currentX = 0; isDragging = true; isHorizontal = false;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; currentX = 0; isDragging = true; isHorizontal = false;
   }, { passive: true });
   el.addEventListener('touchmove', function(e) {
     if (!isDragging) return;
@@ -1553,131 +1283,82 @@ function attachSwipeReply(el, m) {
       if (Math.abs(dx) > Math.abs(dy) + 5) { isHorizontal = true; el.classList.add('swiping'); }
       else if (Math.abs(dy) > 10) { isDragging = false; return; }
     }
-    if (isHorizontal && dx > 0 && dx < 100) {
-      currentX = dx;
-      el.style.transform = 'translateX(' + dx + 'px)';
-    }
+    if (isHorizontal && dx > 0 && dx < 100) { currentX = dx; el.style.transform = 'translateX(' + dx + 'px)'; }
   }, { passive: true });
   el.addEventListener('touchend', function() {
-    isDragging = false;
-    el.classList.remove('swiping');
-    el.style.transform = '';
+    isDragging = false; el.classList.remove('swiping'); el.style.transform = '';
     if (isHorizontal && currentX > 50) setReplyTo(m);
     currentX = 0; isHorizontal = false;
   });
 }
-
 function setReplyTo(m) {
   replyToMsg = m;
   var fromName = m.from_user === user.id ? 'Вы' : 'Собеседник';
   var text = m.text || (m.image ? '📷 Фото' : '');
-  $('rpName').textContent = fromName;
-  $('rpText').textContent = String(text).slice(0, 100);
-  $('replyPreview').classList.add('on');
-  $('roomInput').focus();
+  $('rpName').textContent = fromName; $('rpText').textContent = String(text).slice(0, 100);
+  $('replyPreview').classList.add('on'); $('roomInput').focus();
 }
-$('rpClose').onclick = function() {
-  replyToMsg = null;
-  $('replyPreview').classList.remove('on');
-};
-
+$('rpClose').onclick = function() { replyToMsg = null; $('replyPreview').classList.remove('on'); };
 $('roomBack').onclick = function() {
-  $('roomScreen').classList.remove('on');
-  currentRoom = null;
-  replyToMsg = null;
-  $('replyPreview').classList.remove('on');
-  if (currentTab === 'chats') renderChats();
+  $('roomScreen').classList.remove('on'); currentRoom = null; replyToMsg = null;
+  $('replyPreview').classList.remove('on'); if (currentTab === 'chats') renderChats();
 };
-
-$('roomInfoBtn').onclick = function() {
-  if (currentRoom && currentRoom.data && currentRoom.data.other) {
-    openUserProfile(currentRoom.data.other.id);
-  }
-};
-
+$('roomInfoBtn').onclick = function() { if (currentRoom && currentRoom.data && currentRoom.data.other) openUserProfile(currentRoom.data.other.id); };
 $('roomSend').onclick = function() {
-  var text = $('roomInput').value.trim();
-  if (!text || !currentRoom) return;
+  var text = $('roomInput').value.trim(); if (!text || !currentRoom) return;
   if (!ws || ws.readyState !== 1) { alert('Нет соединения'); return; }
   var payload = { type: 'send', chatId: currentRoom.id, text: text };
   if (replyToMsg) payload.replyTo = replyToMsg.id;
-  ws.send(JSON.stringify(payload));
-  $('roomInput').value = '';
-  replyToMsg = null;
-  $('replyPreview').classList.remove('on');
+  ws.send(JSON.stringify(payload)); $('roomInput').value = ''; replyToMsg = null; $('replyPreview').classList.remove('on');
 };
-$('roomInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') $('roomSend').click();
-});
-
-// подарок в чате
-$('giftBtn').onclick = function() {
-  if (!currentRoom) return;
-  openGiftChat();
-};
+$('roomInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('roomSend').click(); });
+$('giftBtn').onclick = function() { if (currentRoom) openGiftChat(); };
 function openGiftChat() {
   $('shopTitle').textContent = 'Подарок для ' + (currentRoom.data && currentRoom.data.other ? (currentRoom.data.other.name || '') : '');
-  var grid = $('shopGrid');
-  grid.innerHTML = '';
+  var grid = $('shopGrid'); grid.innerHTML = '';
   Object.keys(NFT_INFO).forEach(function(type) {
-    var info = NFT_INFO[type];
-    var hasNft = (user.nfts || []).some(function(n) { return n.type === type; });
-    var card = document.createElement('div');
-    card.className = 'shop-card';
-    card.style.opacity = hasNft ? '1' : '0.5';
-    card.innerHTML = '<div class="shop-img" style="background-image:url(' + info.img + ')"></div>' +
-      '<div class="shop-name">' + info.name + '</div>' +
-      '<div class="shop-price">' + (hasNft ? 'Подарить' : 'Нет NFT') + '</div>';
-    card.onclick = function() {
-      if (!hasNft) { alert('Сначала купи в магазине'); return; }
-      giveNftToFriend(type);
-    };
+    var info = NFT_INFO[type]; var hasNft = (user.nfts || []).some(function(n) { return n.type === type; });
+    var card = document.createElement('div'); card.className = 'shop-card'; card.style.opacity = hasNft ? '1' : '0.5';
+    card.innerHTML = '<div class="shop-img" style="background-image:url(' + info.img + ')"></div><div class="shop-name">' + info.name + '</div><div class="shop-price">' + (hasNft ? 'Подарить' : 'Нет NFT') + '</div>';
+    card.onclick = function() { if (!hasNft) { alert('Сначала купи'); return; } giveNftToFriend(type); };
     grid.appendChild(card);
   });
   Object.keys(GIFTS_ORD).forEach(function(gid) {
     var info = GIFTS_ORD[gid];
-    var card = document.createElement('div');
-    card.className = 'shop-card';
-    card.innerHTML = '<div class="shop-emoji">' + info.emoji + '</div>' +
-      '<div class="shop-name">' + info.name + '</div>' +
-      '<div class="shop-price">' + info.price + ' 🔮</div>';
+    var card = document.createElement('div'); card.className = 'shop-card';
+    card.innerHTML = '<div class="shop-emoji">' + info.emoji + '</div><div class="shop-name">' + info.name + '</div><div class="shop-price">' + info.price + ' 🔮</div>';
     card.onclick = function() { sendOrdinaryGift(gid, info.price, info.name); };
     grid.appendChild(card);
   });
   $('shopModal').classList.add('on');
 }
 function giveNftToFriend(type) {
-  var nft = (user.nfts || []).find(function(n) { return n.type === type; });
-  if (!nft) return;
+  var nft = (user.nfts || []).find(function(n) { return n.type === type; }); if (!nft) return;
   if (!confirm('Подарить ' + NFT_INFO[type].name + '?')) return;
-  fetch('/api/nft/give', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ toUserId: currentRoom.data.other.id, nftId: nft.id })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    user.nfts = user.nfts.filter(function(n) { return n.id !== nft.id; });
-    if (user.profileNft === nft.id) user.profileNft = null;
-    localStorage.setItem('user', JSON.stringify(user));
-    ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: '', nft: { type: nft.type, number: nft.number } }));
-    $('shopModal').classList.remove('on');
-    alert('NFT подарен!');
-  });
+  fetch('/api/nft/give', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ toUserId: currentRoom.data.other.id, nftId: nft.id }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      user.nfts = user.nfts.filter(function(n) { return n.id !== nft.id; });
+      if (user.profileNft === nft.id) user.profileNft = null;
+      localStorage.setItem('user', JSON.stringify(user));
+      ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: '', nft: { type: nft.type, number: nft.number } }));
+      $('shopModal').classList.remove('on');
+      var _info = NFT_INFO[type] || {};
+      showGiftAnimation('🎁', 'Вы подарили ' + (_info.name || 'NFT'));
+    });
 }
 function sendOrdinaryGift(gid, price, name) {
   if ((user.oxy || 0) < price) { alert('Недостаточно Окси'); return; }
   if (!confirm('Отправить ' + name + ' за ' + price + ' 🔮?')) return;
-  fetch('/api/gift', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ toUserId: currentRoom.data.other.id, giftId: gid, price: price })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    user.oxy = (user.oxy || 0) - price;
-    localStorage.setItem('user', JSON.stringify(user));
-    ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: '🎁 Подарок: ' + name + ' (' + price + ' 🔮)' }));
-    $('shopModal').classList.remove('on');
-  });
+  fetch('/api/gift', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ toUserId: currentRoom.data.other.id, giftId: gid, price: price }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      user.oxy = (user.oxy || 0) - price; localStorage.setItem('user', JSON.stringify(user));
+      ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: '🎁 Подарок: ' + name + ' (' + price + ' 🔮)' }));
+      $('shopModal').classList.remove('on');
+      var info = GIFTS_ORD[gid] || {};
+      showGiftAnimation(info.emoji || '🎁', 'Вы подарили ' + name);
+    });
 }
 
 // ===== БОКОВОЕ МЕНЮ =====
@@ -1685,23 +1366,17 @@ $('roomMenuBtn').onclick = function() {
   var sb = $('roomSidebar');
   var isChannel = currentRoom && currentRoom.data && currentRoom.data.type === 'channel';
   if (isChannel) {
-    $('menuBlock').style.display = 'none';
-    $('menuChannel').style.display = 'flex';
-    var isOwner = currentRoom.data.ownerId === user.id;
-    $('menuChannelText').textContent = isOwner ? 'Удалить канал' : 'Покинуть канал';
+    $('menuBlock').style.display = 'none'; $('menuChannel').style.display = 'flex';
+    $('menuChannelText').textContent = currentRoom.data.ownerId === user.id ? 'Удалить канал' : 'Покинуть канал';
   } else {
-    $('menuBlock').style.display = 'flex';
-    $('menuChannel').style.display = 'none';
-    var blocked = currentRoom && currentRoom.data && currentRoom.data.blockedByMe;
-    $('menuBlockText').textContent = blocked ? 'Разблокировать' : 'Заблокировать';
+    $('menuBlock').style.display = 'flex'; $('menuChannel').style.display = 'none';
+    $('menuBlockText').textContent = (currentRoom && currentRoom.data && currentRoom.data.blockedByMe) ? 'Разблокировать' : 'Заблокировать';
   }
   sb.classList.toggle('on');
 };
 $('menuClose').onclick = function() { $('roomSidebar').classList.remove('on'); };
-
 $('menuBlock').onclick = function() {
   if (!currentRoom || !currentRoom.data.other) return;
-  var other = currentRoom.data.other;
   $('blockConfirmTitle').textContent = 'Заблокировать?';
   $('blockConfirmText').textContent = 'Пользователь не сможет писать вам.';
   $('blockConfirmModal').classList.add('on');
@@ -1709,74 +1384,38 @@ $('menuBlock').onclick = function() {
 $('blockConfirmClose').onclick = function() { $('blockConfirmModal').classList.remove('on'); };
 $('blockConfirmBtn').onclick = function() {
   if (!currentRoom || !currentRoom.data.other) return;
-  fetch('/api/block', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ userId: currentRoom.data.other.id })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    $('blockConfirmModal').classList.remove('on');
-    $('roomSidebar').classList.remove('on');
-    alert('Заблокирован');
-  });
+  fetch('/api/block', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ userId: currentRoom.data.other.id }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      $('blockConfirmModal').classList.remove('on'); $('roomSidebar').classList.remove('on'); alert('Заблокирован');
+    });
 };
-
 $('menuChannel').onclick = function() {
   if (!currentRoom) return;
-  var isOwner = currentRoom.data.ownerId === user.id;
-  if (isOwner) {
-    if (!confirm('Удалить канал?')) return;
-    alert('Удаление канала — скоро');
-    return;
-  }
+  if (currentRoom.data.ownerId === user.id) { alert('Удаление канала — скоро'); return; }
   if (!confirm('Покинуть канал?')) return;
-  fetch('/api/channel/unsubscribe', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ chatId: currentRoom.id })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { alert(d.error || 'Ошибка'); return; }
-    $('roomSidebar').classList.remove('on');
-    $('roomScreen').classList.remove('on');
-    currentRoom = null;
-    renderChats();
-  });
+  fetch('/api/channel/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ chatId: currentRoom.id }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+      $('roomSidebar').classList.remove('on'); $('roomScreen').classList.remove('on'); currentRoom = null; renderChats();
+    });
 };
-
-$('menuClear').onclick = function() {
-  $('roomSidebar').classList.remove('on');
-  $('clearChatModal').classList.add('on');
-};
+$('menuClear').onclick = function() { $('roomSidebar').classList.remove('on'); $('clearChatModal').classList.add('on'); };
 $('clearClose').onclick = function() { $('clearChatModal').classList.remove('on'); };
 $('clearForMe').onclick = function() {
-  fetch('/api/chat/clear', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ chatId: currentRoom.id, all: false })
-  }).then(function() {
-    $('clearChatModal').classList.remove('on');
-    $('roomMessages').innerHTML = '';
-  });
+  fetch('/api/chat/clear', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ chatId: currentRoom.id, all: false }) })
+    .then(function() { $('clearChatModal').classList.remove('on'); $('roomMessages').innerHTML = ''; });
 };
 $('clearForAll').onclick = function() {
   if (!confirm('Удалить у обоих?')) return;
-  fetch('/api/chat/clear', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ chatId: currentRoom.id, all: true })
-  }).then(function() {
-    $('clearChatModal').classList.remove('on');
-    $('roomMessages').innerHTML = '';
-  });
+  fetch('/api/chat/clear', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ chatId: currentRoom.id, all: true }) })
+    .then(function() { $('clearChatModal').classList.remove('on'); $('roomMessages').innerHTML = ''; });
 };
-
-// ===== КАНАЛЫ =====
+ // ===== КАНАЛЫ =====
 $('createBtn').onclick = function() {
   if (currentTab === 'contacts') {
-    $('addContactInput').value = '';
-    $('addContactErr').textContent = '';
-    $('addContactModal').classList.add('on');
-    $('addContactInput').focus();
+    $('addContactInput').value = ''; $('addContactErr').textContent = '';
+    $('addContactModal').classList.add('on'); $('addContactInput').focus();
   } else {
     $('createModal').classList.add('on');
   }
@@ -1788,12 +1427,9 @@ $('createChatBtn').onclick = function() {
 };
 $('createChannelBtn').onclick = function() {
   $('createModal').classList.remove('on');
-  $('channelTitle').value = '';
-  $('channelUsername').value = '';
-  $('channelDescription').value = '';
+  $('channelTitle').value = ''; $('channelUsername').value = ''; $('channelDescription').value = '';
   $('channelErr').textContent = '';
-  $('createChannelModal').classList.add('on');
-  $('channelTitle').focus();
+  $('createChannelModal').classList.add('on'); $('channelTitle').focus();
 };
 $('channelClose').onclick = function() { $('createChannelModal').classList.remove('on'); };
 $('channelCreateBtn').onclick = function() {
@@ -1805,33 +1441,69 @@ $('channelCreateBtn').onclick = function() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ title: title, username: username || null, description: description })
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (!d.ok) { $('channelErr').textContent = d.error || 'Ошибка'; return; }
-    $('createChannelModal').classList.remove('on');
-    alert('Канал создан!');
-    setTab('chats');
-    openRoom(d.chatId, '📢 ' + title, { chat: { id: d.chatId, type: 'channel', title: title, ownerId: user.id } });
-  });
+  })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (!d.ok) { $('channelErr').textContent = d.error || 'Ошибка'; return; }
+      $('createChannelModal').classList.remove('on');
+      alert('Канал создан!');
+      setTab('chats');
+      openRoom(d.chatId, '📢 ' + title, { chat: { id: d.chatId, type: 'channel', title: title, ownerId: user.id } });
+    });
 };
 
-// ===== ПРОФИЛЬ ДРУГОГО =====
+// ===== ЧУЖОЙ ПРОФИЛЬ =====
 function openUserProfile(userId) {
   fetch('/api/user?id=' + userId, { headers: { 'Authorization': 'Bearer ' + token } })
     .then(function(r) { return r.json(); })
     .then(function(u) {
       if (!u.id) { alert('Не найдено'); return; }
       var name = u.name || 'Без имени';
-      var username = u.username ? '@' + u.username : '';
-      alert('Профиль: ' + name + '\n' + username + '\nID: ' + u.id);
+      var username = u.username ? '@' + u.username : '@без_юзернейма';
+      var initial = name.charAt(0).toUpperCase();
+      var avStyle = u.avatar ? ' style="background-image:url(' + u.avatar + ')"' : '';
+      var avText = u.avatar ? '' : initial;
+      var check = creatorBadge(u.isCreator);
+      var status = u.online ? 'в сети' : (u.lastSeen ? 'был(а) недавно' : 'офлайн');
+      main.innerHTML =
+        '<div class="profile-top">' +
+          '<div class="profile-avatar"' + avStyle + '>' + avText + '</div>' +
+          '<div class="profile-name">' + escapeHtml(name) + check + '</div>' +
+          '<div class="profile-username">' + escapeHtml(username) + '</div>' +
+          '<div class="profile-status">' + status + '</div>' +
+        '</div>' +
+        '<div class="profile-actions">' +
+          '<div class="profile-action" id="upWrite"><div class="ico">✉️</div><div class="lbl">Написать</div></div>' +
+          '<div class="profile-action" id="upGift"><div class="ico">🎁</div><div class="lbl">Подарок</div></div>' +
+        '</div>' +
+        '<div class="profile-info">' +
+          (u.login ? '<div class="profile-info-row"><div class="val">' + escapeHtml(u.login) + '</div><div class="lbl">Логин</div></div>' : '') +
+          '<div class="profile-info-row"><div class="val">' + (u.bio ? escapeHtml(u.bio) : 'Не задано') + '</div><div class="lbl">О себе</div></div>' +
+          '<div class="profile-info-row"><div class="val">' + escapeHtml(username) + '</div><div class="lbl">Имя пользователя</div></div>' +
+          '<div class="profile-info-row"><div class="val">' + (u.id || '?') + '</div><div class="lbl">ID</div></div>' +
+          (u.birthday ? '<div class="profile-info-row"><div class="val">' + escapeHtml(u.birthday) + '</div><div class="lbl">День рождения</div></div>' : '') +
+        '</div>';
+      setTab('profile');
+      $('upWrite').onclick = function() {
+        fetch('/api/chats/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ userId: u.id })
+        })
+          .then(function(r) { return r.json(); }).then(function(rd) {
+            if (!rd.ok) { alert(rd.error || 'Ошибка'); return; }
+            setTab('chats');
+            openRoom(rd.chatId, u.name || u.username, { other: u });
+          });
+      };
+      $('upGift').onclick = function() { alert('Подарок — через чат'); };
     });
 }
 
-// ===== ДОБАВЛЕНИЕ КОНТАКТА =====
+// ===== КОНТАКТЫ =====
 $('addContactClose').onclick = function() { $('addContactModal').classList.remove('on'); };
 $('addContactBtn').onclick = function() {
   var q = $('addContactInput').value.trim().toLowerCase();
-  var err = $('addContactErr');
-  err.textContent = '';
+  var err = $('addContactErr'); err.textContent = '';
   if (!q) { err.textContent = 'Введите юзернейм'; return; }
   fetch('/api/search?q=' + encodeURIComponent(q), { headers: { 'Authorization': 'Bearer ' + token } })
     .then(function(r) { return r.json(); })
@@ -1842,11 +1514,12 @@ $('addContactBtn').onclick = function() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         body: JSON.stringify({ userId: u.id })
-      }).then(function(r) { return r.json(); }).then(function(d) {
-        if (!d.ok) { err.textContent = d.error || 'Ошибка'; return; }
-        $('addContactModal').classList.remove('on');
-        if (currentTab === 'contacts') renderContacts();
-      });
+      })
+        .then(function(r) { return r.json(); }).then(function(d) {
+          if (!d.ok) { err.textContent = d.error || 'Ошибка'; return; }
+          $('addContactModal').classList.remove('on');
+          if (currentTab === 'contacts') renderContacts();
+        });
     });
 };
 
@@ -1856,4 +1529,4 @@ $('creatorClose').onclick = function() { $('creatorModal').classList.remove('on'
 setTab('chats');
 </script>
 </body>
- </html>
+</html>
