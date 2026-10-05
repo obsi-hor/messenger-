@@ -459,7 +459,7 @@ wss.on('connection',(ws,req)=>{
     if(d.type==='send'){
       const chatId=Number(d.chatId);
       const text=String(d.text||'').trim().slice(0,2000);
-      const image=d.image?String(d.image).slice(0,500):
+      const image=d.image?String(d.image).slice(0,500):null;
             const replyTo = d.replyTo ? Number(d.replyTo) : null;
       const nftData = d.nft || null;
       if(!text&&!image&&!nftData)return;
