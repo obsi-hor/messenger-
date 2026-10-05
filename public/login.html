@@ -12,12 +12,14 @@
     background: #17212b; color: #fff;
     overflow: hidden;
   }
-  .wrap {
-    display: flex; flex-direction: column;
-    padding: 24px; padding-top: 40px;
-    height: 100%;
+  body { display: flex; flex-direction: column; }
+
+  .tabs {
+    display: flex;
+    padding: 16px 20px 0;
+    padding-top: max(16px, env(safe-area-inset-top));
+    gap: 8px;
   }
-  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
   .tab {
     flex: 1; padding: 10px;
     background: #232e3c; border: 0;
@@ -26,122 +28,245 @@
     font-weight: 500;
   }
   .tab.on { background: #6ab2f2; color: #fff; }
-  h1 { font-size: 24px; margin: 0 0 8px; text-align: center; }
-  .sub { color: #7d8e9e; font-size: 14px; text-align: center; margin-bottom: 32px; }
-  label { display: block; font-size: 13px; color: #6ab2f2; margin: 16px 0 6px; }
-  input {
-    width: 100%; padding: 10px 2px;
-    background: transparent; border: 0;
-    border-bottom: 1px solid #2f3d4c;
-    color: #fff; font-size: 17px; outline: none;
+
+  .screen {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 0 24px; padding-top: 32px;
+    overflow-y: auto;
   }
-  input:focus { border-bottom-color: #6ab2f2; }
-  button.submit {
-    width: 100%; padding: 15px; margin-top: 24px;
+  h1 { font-size: 24px; font-weight: 500; margin: 0 0 8px; text-align: center; }
+  .subtitle {
+    color: #7d8e9e; font-size: 14px; text-align: center;
+    margin-bottom: 32px; line-height: 1.4;
+  }
+  .field { position: relative; margin-bottom: 20px; }
+  .field label {
+    display: block; font-size: 13px; color: #6ab2f2;
+    margin-bottom: 6px; padding-left: 2px;
+  }
+  .field input {
+    width: 100%; background: transparent;
+    border: 0; border-bottom: 1px solid #2f3d4c;
+    color: #fff; font-size: 17px; padding: 10px 2px;
+    outline: none; transition: border-color .15s;
+  }
+  .field input:focus { border-color: #6ab2f2; }
+  .field input::placeholder { color: #4a5a6a; }
+
+  .btn {
+    width: 100%; padding: 15px;
     background: #6ab2f2; color: #fff; border: 0;
     border-radius: 10px; font-size: 16px; font-weight: 500;
-    cursor: pointer;
+    cursor: pointer; margin-top: 8px;
   }
-  .err { color: #e85c5c; font-size: 13px; min-height: 18px; margin-top: 12px; text-align: center; }
+  .btn:hover { background: #5aa2e2; }
+  .btn:disabled { background: #2f3d4c; color: #5a6a7a; cursor: not-allowed; }
+  .error {
+    color: #e85c5c; font-size: 13px; text-align: center;
+    min-height: 18px; margin-top: 8px; margin-bottom: 8px;
+  }
   .hidden { display: none; }
+  .back-link {
+    text-align: center; color: #6ab2f2; font-size: 14px;
+    margin-top: 20px; cursor: pointer;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="tabs">
-    <button class="tab on" id="tabLogin" type="button">Вход</button>
-    <button class="tab" id="tabReg" type="button">Регистрация</button>
-  </div>
 
-  <div id="loginBlock">
-    <h1>Вход</h1>
-    <div class="sub">Введите логин и пароль</div>
+<!-- ТАБЫ -->
+<div class="tabs" id="tabs">
+  <button class="tab on" data-mode="login">Вход</button>
+  <button class="tab" data-mode="register">Регистрация</button>
+</div>
+
+<!-- ВХОД -->
+<div class="screen" id="mode-login">
+  <h1>Вход</h1>
+  <div class="subtitle">Введите логин и пароль</div>
+  <div class="field">
     <label>Логин</label>
-    <input id="loginInput" type="text" autocomplete="off" autocapitalize="off">
+    <input id="loginLogin" type="text" placeholder="ваш_логин" autocomplete="username" autocapitalize="off">
+  </div>
+  <div class="field">
     <label>Пароль</label>
-    <input id="passInput" type="password" autocomplete="off">
-    <div class="err" id="loginErr"></div>
-    <button class="submit" id="loginBtn" type="button">Войти</button>
+    <input id="loginPassword" type="password" placeholder="пароль" autocomplete="current-password">
   </div>
+  <div class="error" id="loginErr"></div>
+  <button class="btn" id="loginBtn">Войти</button>
+</div>
 
-  <div id="regBlock" class="hidden">
-    <h1>Регистрация</h1>
-    <div class="sub">Придумайте логин и пароль</div>
+<!-- 2FA -->
+<div class="screen hidden" id="mode-2fa">
+  <h1>Двухфакторная защита</h1>
+  <div class="subtitle">Введите пароль 2FA и кодовое слово</div>
+  <div class="field">
+    <label>Пароль 2FA</label>
+    <input id="faPassword" type="password" placeholder="пароль 2FA">
+  </div>
+  <div class="field">
+    <label>Кодовое слово</label>
+    <input id="faWord" type="text" placeholder="кодовое слово" autocapitalize="off">
+  </div>
+  <div class="error" id="faErr"></div>
+  <button class="btn" id="faBtn">Войти</button>
+  <div class="back-link" id="faBack">← Назад</div>
+</div>
+
+<!-- РЕГИСТРАЦИЯ -->
+<div class="screen hidden" id="mode-register">
+  <h1>Регистрация</h1>
+  <div class="subtitle">Придумайте логин и пароль</div>
+  <div class="field">
     <label>Логин</label>
-    <input id="regLogin" type="text" autocomplete="off" autocapitalize="off">
+    <input id="regLogin" type="text" placeholder="ваш_логин" autocomplete="username" autocapitalize="off">
+  </div>
+  <div class="field">
     <label>Имя</label>
-    <input id="regName" type="text" autocomplete="off">
-    <label>Пароль</label>
-    <input id="regPass" type="password" autocomplete="off">
-    <div class="err" id="regErr"></div>
-    <button class="submit" id="regBtn" type="button">Создать аккаунт</button>
+    <input id="regName" type="text" placeholder="Как вас зовут" maxlength="64">
   </div>
+  <div class="field">
+    <label>Пароль</label>
+    <input id="regPassword" type="password" placeholder="минимум 4 символа" autocomplete="new-password">
+  </div>
+  <div class="error" id="regErr"></div>
+  <button class="btn" id="regBtn">Создать аккаунт</button>
 </div>
 
 <script>
-  var loginBlock = document.getElementById('loginBlock');
-  var regBlock = document.getElementById('regBlock');
-  var tabLogin = document.getElementById('tabLogin');
-  var tabReg = document.getElementById('tabReg');
+var $ = function(id) { return document.getElementById(id); };
+var currentLogin = '';
+var currentPassword = '';
 
-  tabLogin.onclick = function () {
-    loginBlock.classList.remove('hidden');
-    regBlock.classList.add('hidden');
-    tabLogin.classList.add('on');
-    tabReg.classList.remove('on');
-  };
-  tabReg.onclick = function () {
-    regBlock.classList.remove('hidden');
-    loginBlock.classList.add('hidden');
-    tabReg.classList.add('on');
-    tabLogin.classList.remove('on');
-  };
+function showScreen(name) {
+  ['mode-login', 'mode-2fa', 'mode-register'].forEach(function(id) {
+    $(id).classList.toggle('hidden', id !== 'mode-' + name);
+  });
+  $('tabs').style.display = (name === '2fa') ? 'none' : 'flex';
+}
 
-  document.getElementById('loginBtn').onclick = function () {
-    var login = document.getElementById('loginInput').value.trim().toLowerCase();
-    var password = document.getElementById('passInput').value;
-    var err = document.getElementById('loginErr');
-    err.textContent = '';
-    if (!login || !password) { err.textContent = 'Заполните поля'; return; }
-    err.textContent = 'Отправка...';
-    fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ login: login, password: password })
-    })
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.onclick = function() {
+    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('on'); });
+    t.classList.add('on');
+    showScreen(t.getAttribute('data-mode'));
+  };
+});
+
+// ВХОД
+$('loginBtn').onclick = function() {
+  var login = $('loginLogin').value.trim().toLowerCase();
+  var password = $('loginPassword').value;
+  var err = $('loginErr');
+  err.textContent = '';
+  if (!login || !password) { err.textContent = 'Заполните все поля'; return; }
+  $('loginBtn').disabled = true;
+  $('loginBtn').textContent = 'Вход...';
+  currentLogin = login;
+  currentPassword = password;
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ login: login, password: password })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      $('loginBtn').disabled = false;
+      $('loginBtn').textContent = 'Войти';
+      if (data.need2fa) {
+        showScreen('2fa');
+        $('faPassword').value = '';
+        $('faWord').value = '';
+        $('faErr').textContent = '';
+        $('faPassword').focus();
+        return;
+      }
       if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       window.location.href = '/app.html';
     })
-    .catch(function (e) { err.textContent = 'Сеть: ' + e.message; });
-  };
+    .catch(function(e) { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Войти'; err.textContent = 'Сеть: ' + e.message; });
+};
 
-  document.getElementById('regBtn').onclick = function () {
-    var login = document.getElementById('regLogin').value.trim().toLowerCase();
-    var name = document.getElementById('regName').value.trim();
-    var password = document.getElementById('regPass').value;
-    var err = document.getElementById('regErr');
-    err.textContent = '';
-    if (!login || !name || !password) { err.textContent = 'Заполните поля'; return; }
-    if (password.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
-    err.textContent = 'Отправка...';
-    fetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ login: login, name: name, password: password })
+// 2FA
+$('faBtn').onclick = function() {
+  var faPass = $('faPassword').value;
+  var faWord = $('faWord').value;
+  var err = $('faErr');
+  err.textContent = '';
+  if (!faPass && !faWord) { err.textContent = 'Введите пароль и/или слово'; return; }
+  $('faBtn').disabled = true;
+  $('faBtn').textContent = 'Проверка...';
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      login: currentLogin,
+      password: currentPassword,
+      twofaPassword: faPass,
+      twofaWord: faWord
     })
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      $('faBtn').disabled = false;
+      $('faBtn').textContent = 'Войти';
+      if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = '/app.html';
+    })
+    .catch(function(e) { $('faBtn').disabled = false; $('faBtn').textContent = 'Войти'; err.textContent = 'Сеть: ' + e.message; });
+};
+
+$('faBack').onclick = function() {
+  showScreen('login');
+  document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('on'); });
+  document.querySelector('.tab[data-mode="login"]').classList.add('on');
+};
+
+// РЕГИСТРАЦИЯ
+$('regBtn').onclick = function() {
+  var login = $('regLogin').value.trim().toLowerCase();
+  var name = $('regName').value.trim();
+  var password = $('regPassword').value;
+  var err = $('regErr');
+  err.textContent = '';
+  if (!login || !name || !password) { err.textContent = 'Заполните все поля'; return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(login)) { err.textContent = 'Логин: 3–20, латиница, цифры, _'; return; }
+  if (password.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
+  $('regBtn').disabled = true;
+  $('regBtn').textContent = 'Создание...';
+  fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ login: login, name: name, password: password })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      $('regBtn').disabled = false;
+      $('regBtn').textContent = 'Создать аккаунт';
       if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       window.location.href = '/app.html?new=1';
     })
-    .catch(function (e) { err.textContent = 'Сеть: ' + e.message; });
-  };
+    .catch(function(e) { $('regBtn').disabled = false; $('regBtn').textContent = 'Создать аккаунт'; err.textContent = 'Сеть: ' + e.message; });
+};
+
+// Enter
+$('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('loginBtn').click(); });
+$('regPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('regBtn').click(); });
+$('faWord').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('faBtn').click(); });
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  });
+}
 </script>
 </body>
-</html>
+ </html>
