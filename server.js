@@ -374,6 +374,21 @@ async function apiNftGive(req,res){
   json(res, 200, r);
 }
 
+// ===== USERNAMES =====
+async function apiBuyUsername(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const username = String(b.username||'').trim().toLowerCase();
+  const r = db.buyExtraUsername(u.id, username);
+  if (r.error) return json(res, 400, { error: r.error });
+  json(res, 200, r);
+}
+async function apiUsernamePrice(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const count = (u.extraUsernames||[]).length;
+  json(res, 200, { price: db.getUsernamePrice(count+1), count, max: 5 });
+}
+
 // ===== CONTACTS =====
 async function apiContacts(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -416,6 +431,8 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/nft/sell'     && req.method==='POST')return apiNftSell(req,res);
     if(url==='/api/nft/profile'  && req.method==='POST')return apiNftSetProfile(req,res);
     if(url==='/api/nft/give'     && req.method==='POST')return apiNftGive(req,res);
+    if(url==='/api/username/buy' && req.method==='POST')return apiBuyUsername(req,res);
+    if(url==='/api/username/price'&&req.method==='GET') return apiUsernamePrice(req,res);
     if(url==='/api/contacts'     && req.method==='GET') return apiContacts(req,res);
     if(url==='/api/contacts/add' && req.method==='POST')return apiAddContact(req,res);
   }catch(e){console.error('API ERROR:',e);return json(res,500,{error:'Ошибка'})}
@@ -442,8 +459,8 @@ wss.on('connection',(ws,req)=>{
     if(d.type==='send'){
       const chatId=Number(d.chatId);
       const text=String(d.text||'').trim().slice(0,2000);
-      const image=d.image?String(d.image).slice(0,500):null;
-      const replyTo = d.replyTo ? Number(d.replyTo) : null;
+      const image=d.image?String(d.image).slice(0,500):
+            const replyTo = d.replyTo ? Number(d.replyTo) : null;
       const nftData = d.nft || null;
       if(!text&&!image&&!nftData)return;
       if(!db.isChatMember(chatId,u.id))return;
