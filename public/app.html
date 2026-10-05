@@ -14,6 +14,7 @@
   }
   body { display: flex; flex-direction: column; }
   #appScreen { flex: 1; display: flex; flex-direction: column; }
+
   header {
     height: 56px; padding: 0 8px;
     padding-top: env(safe-area-inset-top);
@@ -28,7 +29,8 @@
     cursor: pointer; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
   }
-  main { flex: 1; overflow-y: auto; padding: 16px; }
+  main { flex: 1; overflow-y: auto; }
+
   nav {
     height: 56px;
     background: #17212b; border-top: 1px solid #0f171f;
@@ -43,10 +45,113 @@
   }
   nav button.on { color: #6ab2f2; }
   nav button .icon { font-size: 20px; }
+
   .empty { text-align: center; padding: 60px 24px; color: #5a6a7a; }
   .empty .icon { font-size: 48px; opacity: .3; margin-bottom: 12px; }
   .empty h2 { font-size: 17px; color: #7d8e9e; margin: 0 0 6px; }
   .empty p { font-size: 14px; margin: 0; }
+
+  /* чаты */
+  .chat-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; min-height: 72px; cursor: pointer;
+  }
+  .chat-item:hover { background: #232e3c; }
+  .chat-avatar {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 500; flex-shrink: 0; text-transform: uppercase;
+    background-size: cover; background-position: center;
+  }
+  .chat-body { flex: 1; min-width: 0; }
+  .chat-title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-last { font-size: 14px; color: #7d8e9e; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* комната */
+  #roomScreen {
+    position: fixed; inset: 0;
+    background: #0e1621;
+    display: none; flex-direction: column; z-index: 20;
+  }
+  #roomScreen.on { display: flex; }
+  .room-header {
+    height: 56px; padding: 0 8px;
+    padding-top: env(safe-area-inset-top);
+    background: #17212b; border-bottom: 1px solid #0f171f;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .room-header button {
+    width: 40px; height: 40px;
+    background: transparent; border: 0;
+    color: #6ab2f2; font-size: 20px; cursor: pointer;
+  }
+  .room-header h2 { font-size: 16px; margin: 0; flex: 1; }
+  #roomMessages {
+    flex: 1; overflow-y: auto; padding: 12px 8px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .msg {
+    max-width: 78%; padding: 8px 12px;
+    border-radius: 12px; background: #182533;
+    font-size: 15px; word-wrap: break-word;
+    align-self: flex-start;
+  }
+  .msg.own { background: #2b5278; align-self: flex-end; }
+  .msg .meta { font-size: 11px; opacity: .6; margin-top: 4px; }
+  .room-input {
+    padding: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: #17212b; border-top: 1px solid #0f171f;
+    display: flex; gap: 8px;
+  }
+  .room-input input {
+    flex: 1; background: #232e3c; border: 0;
+    color: #fff; padding: 11px 16px;
+    border-radius: 20px; font-size: 15px; outline: none;
+  }
+  .room-input button {
+    width: 44px; height: 44px;
+    background: #6ab2f2; color: #fff; border: 0;
+    border-radius: 50%; font-size: 18px; cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* модалка поиска */
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px; z-index: 30;
+  }
+  .modal.on { display: flex; }
+  .modal-body {
+    background: #17212b; border-radius: 16px; padding: 20px;
+    width: 100%; max-width: 380px;
+  }
+  .modal-body h3 { margin: 0 0 16px; font-size: 18px; text-align: center; }
+  .modal-body input {
+    width: 100%; background: #232e3c; border: 0;
+    color: #fff; padding: 12px 16px; border-radius: 10px;
+    font-size: 15px; outline: none;
+  }
+  .modal-body button {
+    width: 100%; padding: 12px; margin-top: 12px;
+    background: transparent; color: #6ab2f2;
+    border: 0; border-radius: 10px; font-size: 15px; cursor: pointer;
+  }
+  .search-result {
+    padding: 10px; margin-top: 12px;
+    background: #232e3c; border-radius: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .search-result .n { font-size: 15px; font-weight: 500; }
+  .search-result .u { font-size: 13px; color: #7d8e9e; }
+  .search-result button {
+    width: auto; padding: 8px 16px;
+    background: #6ab2f2; color: #fff;
+    border-radius: 8px; font-size: 13px;
+    margin: 0; cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -57,12 +162,7 @@
     <h1 id="title">Чаты</h1>
     <button id="createBtn">✏️</button>
   </header>
-  <main id="main">
-    <div class="empty">
-      <div class="icon">⏳</div>
-      <h2>Загрузка...</h2>
-    </div>
-  </main>
+  <main id="main"></main>
   <nav>
     <button class="on" data-tab="chats"><span class="icon">💬</span>Чаты</button>
     <button data-tab="contacts"><span class="icon">👥</span>Контакты</button>
@@ -71,19 +171,42 @@
   </nav>
 </div>
 
+<!-- комната -->
+<div id="roomScreen">
+  <div class="room-header">
+    <button id="roomBack">←</button>
+    <h2 id="roomTitle">Чат</h2>
+  </div>
+  <div id="roomMessages"></div>
+  <div class="room-input">
+    <input id="roomInput" placeholder="Сообщение" autocomplete="off">
+    <button id="roomSend">➤</button>
+  </div>
+</div>
+
+<!-- модалка поиска -->
+<div class="modal" id="searchModal">
+  <div class="modal-body">
+    <h3>Найти пользователя</h3>
+    <input id="searchInput" placeholder="юзернейм" autocomplete="off">
+    <div id="searchResults"></div>
+    <button id="searchClose">Закрыть</button>
+  </div>
+</div>
+
 <script>
 var token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = '/login.html';
-}
+if (!token) { window.location.href = '/login.html'; }
 
 var user = {};
 try { user = JSON.parse(localStorage.getItem('user') || '{}'); } catch(e) { user = {}; }
 
-var currentTab = 'chats';
 var $ = function(id) { return document.getElementById(id); };
 var main = $('main');
 var title = $('title');
+var currentTab = 'chats';
+var currentRoom = null;
+var ws = null;
 
 function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, function(c) {
@@ -91,55 +214,83 @@ function escapeHtml(s) {
   });
 }
 
+function fmtTime(ts) {
+  return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+
+// ===== WEBSOCKET =====
+function connectWS() {
+  var proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(proto + '://' + location.host + '/?token=' + token);
+  ws.onopen = function() { console.log('WS open'); };
+  ws.onclose = function() { setTimeout(connectWS, 2000); };
+  ws.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    if (data.type === 'message') {
+      if (currentRoom && data.chatId === currentRoom.id) {
+        addMessage(data.message);
+        $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
+      }
+      if (currentTab === 'chats') renderChats();
+    }
+  };
+}
+connectWS();
+
+// ===== ВКЛАДКИ =====
 function setTab(tab) {
   currentTab = tab;
   var buttons = document.querySelectorAll('nav button');
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].classList.toggle('on', buttons[i].getAttribute('data-tab') === tab);
   }
-  if (tab === 'chats') {
-    title.textContent = 'Чаты';
-    renderChats();
-  } else if (tab === 'contacts') {
-    title.textContent = 'Контакты';
-    renderContacts();
-  } else if (tab === 'settings') {
-    title.textContent = 'Настройки';
-    renderSettings();
-  } else if (tab === 'profile') {
-    title.textContent = 'Профиль';
-    renderProfile();
-  }
+  if (tab === 'chats') { title.textContent = 'Чаты'; renderChats(); }
+  else if (tab === 'contacts') { title.textContent = 'Контакты'; renderContacts(); }
+  else if (tab === 'settings') { title.textContent = 'Настройки'; renderSettings(); }
+  else if (tab === 'profile') { title.textContent = 'Профиль'; renderProfile(); }
 }
+document.querySelectorAll('nav button').forEach(function(b) {
+  b.onclick = function() { setTab(b.getAttribute('data-tab')); };
+});
 
+// ===== ЧАТЫ =====
 function renderChats() {
   main.innerHTML = '<div class="empty"><h2>Загрузка...</h2></div>';
   fetch('/api/chats', { headers: { 'Authorization': 'Bearer ' + token } })
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (!data.chats || !data.chats.length) {
-        main.innerHTML = '<div class="empty"><div class="icon">💬</div><h2>Пока пусто</h2><p>Найди друга через поиск</p></div>';
+        main.innerHTML = '<div class="empty"><div class="icon">💬</div><h2>Пока пусто</h2><p>Найди друга через поиск 🔍</p></div>';
         return;
       }
-      var html = '';
-      for (var i = 0; i < data.chats.length; i++) {
-        var c = data.chats[i];
+      main.innerHTML = '';
+      data.chats.forEach(function(c) {
         var name = (c.other && (c.other.name || c.other.username)) || 'Чат';
-        html += '<div style="padding:12px 0;border-bottom:1px solid #1c2635">' + escapeHtml(name) + '</div>';
-      }
-      main.innerHTML = html;
+        var initial = name.charAt(0).toUpperCase();
+        var last = (c.last && c.last.text) || 'Нет сообщений';
+        var el = document.createElement('div');
+        el.className = 'chat-item';
+        el.innerHTML = '<div class="chat-avatar">' + initial + '</div>' +
+          '<div class="chat-body"><div class="chat-title">' + escapeHtml(name) + '</div>' +
+          '<div class="chat-last">' + escapeHtml(last) + '</div></div>';
+        el.onclick = function() { openRoom(c.id, name, c.other); };
+        main.appendChild(el);
+      });
     })
     .catch(function(e) { main.innerHTML = '<div class="empty"><h2>Ошибка</h2><p>' + escapeHtml(e.message) + '</p></div>'; });
 }
 
+// ===== КОНТАКТЫ =====
 function renderContacts() {
   main.innerHTML = '<div class="empty"><div class="icon">👥</div><h2>Контакты</h2><p>Скоро</p></div>';
 }
 
+// ===== НАСТРОЙКИ =====
 function renderSettings() {
   main.innerHTML = '<div class="empty"><div class="icon">⚙️</div><h2>Настройки</h2><p>Скоро</p></div>';
 }
 
+// ===== ПРОФИЛЬ =====
 function renderProfile() {
   var name = user.name || 'Без имени';
   var username = user.username ? '@' + user.username : '';
@@ -157,14 +308,106 @@ function renderProfile() {
   };
 }
 
-var tabs = document.querySelectorAll('nav button');
-for (var i = 0; i < tabs.length; i++) {
-  tabs[i].onclick = function() { setTab(this.getAttribute('data-tab')); };
+// ===== КОМНАТА =====
+function openRoom(chatId, name, other) {
+  currentRoom = { id: chatId, name: name, other: other };
+  $('roomTitle').textContent = name;
+  $('roomMessages').innerHTML = '<div style="color:#5a6a7a;text-align:center;padding:12px">Загрузка...</div>';
+  $('roomScreen').classList.add('on');
+  fetch('/api/messages?chatId=' + chatId, {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      $('roomMessages').innerHTML = '';
+      if (data.messages) data.messages.forEach(addMessage);
+      $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
+    })
+    .catch(function() {
+      $('roomMessages').innerHTML = '<div style="color:#e85c5c;text-align:center;padding:12px">Ошибка загрузки</div>';
+    });
 }
 
-$('searchBtn').onclick = function() { alert('Поиск — позже'); };
+function addMessage(m) {
+  var own = m.from_user === user.id;
+  var div = document.createElement('div');
+  div.className = 'msg' + (own ? ' own' : '');
+  div.innerHTML = escapeHtml(m.text || '') + '<div class="meta">' + fmtTime(m.created_at) + '</div>';
+  $('roomMessages').appendChild(div);
+}
+
+$('roomBack').onclick = function() {
+  $('roomScreen').classList.remove('on');
+  currentRoom = null;
+  if (currentTab === 'chats') renderChats();
+};
+
+$('roomSend').onclick = function() {
+  var text = $('roomInput').value.trim();
+  if (!text || !currentRoom) return;
+  if (!ws || ws.readyState !== 1) { alert('Нет соединения'); return; }
+  ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: text }));
+  $('roomInput').value = '';
+};
+
+$('roomInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') $('roomSend').click();
+});
+
+// ===== ПОИСК =====
+$('searchBtn').onclick = function() {
+  $('searchModal').classList.add('on');
+  $('searchInput').value = '';
+  $('searchResults').innerHTML = '';
+  $('searchInput').focus();
+};
+$('searchClose').onclick = function() { $('searchModal').classList.remove('on'); };
+
+$('searchInput').addEventListener('input', function() {
+  var q = $('searchInput').value.trim().toLowerCase();
+  var results = $('searchResults');
+  if (!q) { results.innerHTML = ''; return; }
+  fetch('/api/search?q=' + encodeURIComponent(q), {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      results.innerHTML = '';
+      if (!data.users || !data.users.length) {
+        results.innerHTML = '<div style="color:#5a6a7a;font-size:13px;text-align:center;margin-top:12px">Никого не найдено</div>';
+        return;
+      }
+      data.users.forEach(function(u) {
+        var el = document.createElement('div');
+        el.className = 'search-result';
+        el.innerHTML = '<div style="flex:1"><div class="n">' + escapeHtml(u.name || 'Без имени') + '</div>' +
+          '<div class="u">@' + escapeHtml(u.username || '') + '</div></div>' +
+          '<button>Написать</button>';
+        el.querySelector('button').onclick = function() {
+          fetch('/api/chats/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ userId: u.id })
+          })
+            .then(function(r) { return r.json(); })
+            .then(function(rd) {
+              if (!rd.ok) { alert(rd.error || 'Ошибка'); return; }
+              $('searchModal').classList.remove('on');
+              if (currentTab !== 'chats') setTab('chats');
+              openRoom(rd.chatId, u.name || u.username, u);
+            });
+        };
+        results.appendChild(el);
+      });
+    });
+});
+
 $('createBtn').onclick = function() { alert('Создать — позже'); };
 
+// ===== СТАРТ =====
 setTab('chats');
 </script>
 </body>
