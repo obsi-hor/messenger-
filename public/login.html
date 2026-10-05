@@ -125,6 +125,10 @@
     <label>Имя</label>
     <input id="regName" type="text" placeholder="Как вас зовут" maxlength="64">
   </div>
+ <div class="field">
+  <label>Юзернейм</label>
+  <input id="regUsername" type="text" placeholder="ваш_юзернейм" maxlength="16" autocapitalize="off">
+ </div>
   <div class="field">
     <label>Пароль</label>
     <input id="regPassword" type="password" placeholder="минимум 4 символа" autocomplete="new-password">
@@ -230,18 +234,20 @@ $('faBack').onclick = function() {
 $('regBtn').onclick = function() {
   var login = $('regLogin').value.trim().toLowerCase();
   var name = $('regName').value.trim();
+  var username = $('regUsername').value.trim().toLowerCase();
   var password = $('regPassword').value;
   var err = $('regErr');
   err.textContent = '';
   if (!login || !name || !password) { err.textContent = 'Заполните все поля'; return; }
   if (!/^[a-z0-9_]{3,20}$/.test(login)) { err.textContent = 'Логин: 3–20, латиница, цифры, _'; return; }
+  if (!/^[a-z0-9_]{5,16}$/.test(username)) { err.textContent = 'Юзернейм: 5–16, латиница, цифры, _'; return; }
   if (password.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
   $('regBtn').disabled = true;
   $('regBtn').textContent = 'Создание...';
   fetch('/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ login: login, name: name, password: password })
+    body: JSON.stringify({ login: login, name: name, password: password, username: username })
   })
     .then(function(r) { return r.json(); })
     .then(function(data) {
