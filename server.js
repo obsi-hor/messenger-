@@ -60,14 +60,13 @@ function detectExt(buf){
 }
 function publicUser(u){
   return {
-    id:u.id, login:u.login, username:u.username,
+    id:u.id, login:u.login, phone:u.phone, username:u.username,
     extraUsernames:u.extraUsernames||[],
     name:u.name, bio:u.bio, avatar:u.avatar,
     birthday:u.birthday, oxy:u.oxy||0, gifts:u.gifts||[],
     nfts:u.nfts||[], profileNft:u.profileNft||null,
     isAdmin:!!u.isAdmin, isCreator:!!u.isCreator,
-    twofaSet:!!(u.twofaPassword || u.twofaWord),
-    showLogin:u.showLogin, showLastSeen:u.showLastSeen,
+    showPhone:u.showPhone, showLastSeen:u.showLastSeen,
     showBio:u.showBio, showBirthday:u.showBirthday
   };
 }
@@ -114,13 +113,16 @@ async function apiRegister(req,res){
   const login=String(b.login||'').trim().toLowerCase();
   const password=String(b.password||'');
   const name=String(b.name||'').trim().slice(0,64);
+  const username=String(b.username||'').trim().toLowerCase();
   if(!/^[a-z0-9_]{3,20}$/.test(login))return json(res,400,{error:'Логин: 3–20, латиница, цифры, _'});
   if(password.length<4)return json(res,400,{error:'Пароль минимум 4 символа'});
+  if(!/^[a-z0-9_]{5,16}$/.test(username))return json(res,400,{error:'Юзернейм: 5–16, латиница, цифры, _'});
   if(db.findUserByLogin(login))return json(res,400,{error:'Логин занят'});
+  if(db.usernameExists && db.usernameExists(username))return json(res,400,{error:'Юзернейм занят'});
   if(!name)return json(res,400,{error:'Введите имя'});
 
   const user=db.createUser({login,passwordHash:hashPwd(password)});
-  db.updateUser(user.id,{name});
+  db.updateUser(user.id,{name: name, username: username});
   db.setOnline(user.id,true);
   db.addIpRegistration(ip, user.id);
   const token=genToken();
@@ -197,6 +199,7 @@ async function apiSetup2fa(req,res){
   db.set2FA(u.id, pass || null, word || null);
   json(res,200,{ok:true});
 }
+
 // ===== UPLOADS =====
 async function apiUploadAvatar(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -281,10 +284,13 @@ async function apiUserInfo(req,res){
     oxy:u.oxy||0, gifts:u.gifts||[], nfts:u.nfts||[],
     profileNft:u.profileNft||null,
     isCreator:!!u.isCreator, isAdmin:!!u.isAdmin,
-    isContact: db.isContact(me.id, u.id)
+    isContact: db.isContact(me.id, u.id),
+    posts: db.getPosts(u.id, 30)
   };
   if(isSelf){
     out.login=u.login; out.bio=u.bio||''; out.birthday=u.birthday||'';
+    out.showLogin=u.showLogin; out.showBio=u.showBio;
+    out.showBirthday=u.showBirthday; out.showLastSeen=u.showLastSeen;
   } else {
     out.login = u.showLogin === 'nobody' ? null : u.login;
     out.bio = u.showBio === 'nobody' ? '' : (u.bio || '');
@@ -293,7 +299,6 @@ async function apiUserInfo(req,res){
   }
   json(res,200,out);
 }
-
 // ===== CHATS =====
 async function apiChats(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -313,7 +318,6 @@ async function apiMessages(req,res){
   const chatId=Number(new URL(req.url,'http://x').searchParams.get('chatId'));
   const chat=db.getChatById(chatId);
   if(!chat)return json(res,404,{error:'Не найден'});
-  // для приватного чата — проверка членства; для канала — все могут читать
   if(chat.type === 'private' && !db.isChatMember(chatId,u.id))return json(res,403,{error:'Нет доступа'});
   const changed=db.markChatRead(chatId,u.id);
   if(changed){
@@ -368,7 +372,8 @@ async function apiOxyTopup(req,res){
   const amount=Math.max(1,Math.min(999999999,Number(b.amount)||0));
   const r=db.addOxy(u.id,amount,'Пополнение (админ)');
   json(res,200,{ok:true,balance:r.balance});
-                                         }
+}
+
 // ===== ORDINARY GIFTS =====
 async function apiSendGift(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -590,7 +595,6 @@ wss.on('connection',(ws,req)=>{
       if(!text&&!image&&!nftData)return;
       if(!db.canWriteToChat(chatId,u.id))return;
       const chat=db.getChatById(chatId);
-      // проверка блокировки для приватных
       if(chat.type === 'private'){
         for(const memberId of chat.members){
           if(memberId === u.id) continue;
@@ -602,7 +606,6 @@ wss.on('connection',(ws,req)=>{
       }
       const extra=nftData?{nft:nftData}:null;
       const msg=db.createMessage(chatId,u.id,text,image,replyTo,extra);
-      // канал — рассылаем подписчикам; приват — участникам
       const targets = chat.type === 'channel' ? (chat.subscribers||[]) : chat.members;
       for(const m of targets) sendToUser(m,{type:'message',chatId,message:msg});
     }
