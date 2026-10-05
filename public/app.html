@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#17212b">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <title>Мессенджер</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -29,6 +32,7 @@
     cursor: pointer; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
   }
+  header button.hidden { visibility: hidden; }
   main { flex: 1; overflow-y: auto; }
 
   nav {
@@ -51,6 +55,15 @@
   .empty h2 { font-size: 17px; color: #7d8e9e; margin: 0 0 6px; }
   .empty p { font-size: 14px; margin: 0; }
 
+  .creator-check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px;
+    background: #6ab2f2; color: #fff;
+    border-radius: 50%; font-size: 10px;
+    margin-left: 4px; cursor: pointer;
+    vertical-align: middle;
+  }
+
   /* чаты */
   .chat-item {
     display: flex; align-items: center; gap: 12px;
@@ -67,6 +80,76 @@
   .chat-body { flex: 1; min-width: 0; }
   .chat-title { font-size: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .chat-last { font-size: 14px; color: #7d8e9e; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* контакты */
+  .contact-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; min-height: 64px;
+  }
+  .contact-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; flex-shrink: 0; text-transform: uppercase;
+    background-size: cover; background-position: center;
+  }
+  .contact-body { flex: 1; min-width: 0; }
+  .contact-name { font-size: 15px; font-weight: 500; }
+  .contact-username { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
+
+  /* профиль */
+  .profile-top {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 20px;
+  }
+  .profile-avatar {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 42px; font-weight: 500; text-transform: uppercase;
+    background-size: cover; background-position: center;
+    cursor: pointer; position: relative; margin-bottom: 14px;
+  }
+  .profile-avatar .cam {
+    position: absolute; right: -4px; bottom: -4px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #6ab2f2; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; border: 3px solid #17212b;
+  }
+  .profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; display:flex; align-items:center; gap:6px; }
+  .profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
+  .profile-id { font-size: 13px; color: #5a6a7a; }
+  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin-bottom: 16px; }
+  .profile-action {
+    flex: 1; background: #232e3c; border-radius: 12px;
+    padding: 12px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px; cursor: pointer;
+  }
+  .profile-action .ico { font-size: 22px; color: #6ab2f2; }
+  .profile-action .lbl { font-size: 12px; color: #fff; }
+  .profile-info { background: #232e3c; border-radius: 14px; margin: 0 12px 12px; overflow: hidden; }
+  .profile-info-row { padding: 12px 16px; border-bottom: 1px solid #2f3d4c; }
+  .profile-info-row:last-child { border-bottom: 0; }
+  .profile-info-row .val { font-size: 16px; word-wrap: break-word; }
+  .profile-info-row .lbl { font-size: 13px; color: #7d8e9e; margin-top: 3px; }
+
+  /* настройки */
+  .settings-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px; min-height: 56px;
+    cursor: pointer;
+    border-bottom: 1px solid #0f171f;
+  }
+  .settings-row:hover { background: #232e3c; }
+  .settings-row .row-icon { width: 24px; text-align: center; font-size: 18px; color: #6ab2f2; }
+  .settings-row .row-body { flex: 1; min-width: 0; }
+  .settings-row .row-title { font-size: 15px; }
+  .settings-row .row-value { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
+  .settings-row .row-arrow { color: #3a4a5a; font-size: 16px; }
+  .settings-row.danger .row-title { color: #e85c5c; }
+  .settings-row.danger .row-icon { color: #e85c5c; }
 
   /* комната */
   #roomScreen {
@@ -116,7 +199,7 @@
     flex-shrink: 0;
   }
 
-  /* модалка */
+  /* модалки */
   .modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.7);
@@ -155,83 +238,9 @@
   .search-result button {
     width: auto; padding: 8px 16px;
     background: #6ab2f2; color: #fff;
-    border-radius: 8px; font-size: 13px;
-    margin: 0; cursor: pointer;
-  }
-
-  /* профиль */
-  .profile-top {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 24px 16px 20px;
-  }
-  .profile-avatar {
-    width: 110px; height: 110px; border-radius: 50%;
-    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
-    color: #fff; display: flex; align-items: center; justify-content: center;
-    font-size: 42px; font-weight: 500; text-transform: uppercase;
-    background-size: cover; background-position: center;
-    cursor: pointer; position: relative; margin-bottom: 14px;
-  }
-  .profile-avatar .cam {
-    position: absolute; right: -4px; bottom: -4px;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: #6ab2f2; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; border: 3px solid #17212b;
-  }
-  .profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
-  .profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
-  .profile-id { font-size: 13px; color: #5a6a7a; }
-  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin-bottom: 16px; }
-  .profile-action {
-    flex: 1; background: #232e3c; border-radius: 12px;
-    padding: 12px 8px;
-    display: flex; flex-direction: column;
-    align-items: center; gap: 6px; cursor: pointer;
-  }
-  .profile-action .ico { font-size: 22px; color: #6ab2f2; }
-  .profile-action .lbl { font-size: 12px; color: #fff; }
-  .profile-info {
-    background: #232e3c; border-radius: 14px;
-    margin: 0 12px 12px; overflow: hidden;
-  }
-  .profile-info-row { padding: 12px 16px; border-bottom: 1px solid #2f3d4c; }
-  .profile-info-row:last-child { border-bottom: 0; }
-  .profile-info-row .val { font-size: 16px; word-wrap: break-word; }
-  .profile-info-row .lbl { font-size: 13px; color: #7d8e9e; margin-top: 3px; }
-
-  /* настройки */
-  .settings-row {
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 20px; min-height: 56px;
+    border: 0; border-radius: 8px; font-size: 13px;
     cursor: pointer;
-    border-bottom: 1px solid #0f171f;
   }
-  .settings-row:hover { background: #232e3c; }
-  .settings-row .row-icon { width: 24px; text-align: center; font-size: 18px; color: #6ab2f2; }
-  .settings-row .row-body { flex: 1; min-width: 0; }
-  .settings-row .row-title { font-size: 15px; }
-  .settings-row .row-value { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
-  .settings-row .row-arrow { color: #3a4a5a; font-size: 16px; }
-  .settings-row.danger .row-title { color: #e85c5c; }
-  .settings-row.danger .row-icon { color: #e85c5c; }
-
-  /* контакты */
-  .contact-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 16px; min-height: 64px; cursor: pointer;
-  }
-  .contact-item:hover { background: #232e3c; }
-  .contact-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
-    color: #fff; display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 500; flex-shrink: 0; text-transform: uppercase;
-    background-size: cover; background-position: center;
-  }
-  .contact-body { flex: 1; min-width: 0; }
-  .contact-name { font-size: 15px; font-weight: 500; }
-  .contact-username { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -251,7 +260,6 @@
   </nav>
 </div>
 
-<!-- комната -->
 <div id="roomScreen">
   <div class="room-header">
     <button id="roomBack">←</button>
@@ -264,7 +272,6 @@
   </div>
 </div>
 
-<!-- модалка поиска -->
 <div class="modal" id="searchModal">
   <div class="modal-body">
     <h3>Найти пользователя</h3>
@@ -274,7 +281,6 @@
   </div>
 </div>
 
-<!-- модалка имени -->
 <div class="modal" id="editNameModal">
   <div class="modal-body">
     <h3>Изменить имя</h3>
@@ -285,7 +291,6 @@
   </div>
 </div>
 
-<!-- модалка юзернейма -->
 <div class="modal" id="editUsernameModal">
   <div class="modal-body">
     <h3>Юзернейм</h3>
@@ -296,7 +301,6 @@
   </div>
 </div>
 
-<!-- модалка добавления контакта -->
 <div class="modal" id="addContactModal">
   <div class="modal-body">
     <h3>Добавить контакт</h3>
@@ -304,6 +308,17 @@
     <div class="err" id="addContactErr"></div>
     <button class="save" id="addContactBtn">Добавить</button>
     <button class="close" id="addContactClose">Отмена</button>
+  </div>
+</div>
+
+<div class="modal" id="creatorModal">
+  <div class="modal-body" style="text-align:center">
+    <div style="font-size:64px;margin-bottom:12px">✅</div>
+    <h3>Оригинальный профиль</h3>
+    <p style="color:#7d8e9e;font-size:14px;margin:0 0 16px;line-height:1.4">
+      Этот аккаунт — <b style="color:#6ab2f2">оригинальный профиль создателя этого приложения</b>.
+    </p>
+    <button class="close" id="creatorClose">Понятно</button>
   </div>
 </div>
 
@@ -329,6 +344,10 @@ function escapeHtml(s) {
 }
 function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+function creatorBadge(isCreator) {
+  if (!isCreator) return '';
+  return '<span class="creator-check" onclick="event.stopPropagation();document.getElementById(\'creatorModal\').classList.add(\'on\')">✓</span>';
 }
 
 // ===== WEBSOCKET =====
@@ -359,23 +378,23 @@ function setTab(tab) {
   }
   if (tab === 'chats') {
     title.textContent = 'Чаты';
-    $('searchBtn').style.visibility = 'visible';
-    $('createBtn').style.visibility = 'hidden';
+    $('searchBtn').classList.remove('hidden');
+    $('createBtn').classList.add('hidden');
     renderChats();
   } else if (tab === 'contacts') {
     title.textContent = 'Контакты';
-    $('searchBtn').style.visibility = 'hidden';
-    $('createBtn').style.visibility = 'visible';
+    $('searchBtn').classList.add('hidden');
+    $('createBtn').classList.remove('hidden');
     renderContacts();
   } else if (tab === 'settings') {
     title.textContent = 'Настройки';
-    $('searchBtn').style.visibility = 'hidden';
-    $('createBtn').style.visibility = 'hidden';
+    $('searchBtn').classList.add('hidden');
+    $('createBtn').classList.add('hidden');
     renderSettings();
   } else if (tab === 'profile') {
     title.textContent = 'Профиль';
-    $('searchBtn').style.visibility = 'hidden';
-    $('createBtn').style.visibility = 'hidden';
+    $('searchBtn').classList.add('hidden');
+    $('createBtn').classList.add('hidden');
     renderProfile();
   }
 }
@@ -402,12 +421,16 @@ function renderChats() {
           var name = (c.other && (c.other.name || c.other.username)) || 'Чат';
           var initial = name.charAt(0).toUpperCase();
           var last = (c.last && c.last.text) || 'Нет сообщений';
+          var check = creatorBadge(c.other && c.other.isCreator);
           var el = document.createElement('div');
           el.className = 'chat-item';
           el.innerHTML = '<div class="chat-avatar">' + initial + '</div>' +
-            '<div class="chat-body"><div class="chat-title">' + escapeHtml(name) + '</div>' +
+            '<div class="chat-body"><div class="chat-title">' + escapeHtml(name) + check + '</div>' +
             '<div class="chat-last">' + escapeHtml(last) + '</div></div>';
-          el.onclick = function() { openRoom(c.id, name, c.other); };
+          el.onclick = function(e) {
+            if (e.target.classList.contains('creator-check')) return;
+            openRoom(c.id, name, c.other);
+          };
           main.appendChild(el);
         })(data.chats[i]);
       }
@@ -432,10 +455,11 @@ function renderContacts() {
         (function(c) {
           var name = c.name || c.username || 'Без имени';
           var initial = name.charAt(0).toUpperCase();
+          var check = creatorBadge(c.isCreator);
           var el = document.createElement('div');
           el.className = 'contact-item';
           el.innerHTML = '<div class="contact-avatar">' + initial + '</div>' +
-            '<div class="contact-body"><div class="contact-name">' + escapeHtml(name) + '</div>' +
+            '<div class="contact-body"><div class="contact-name">' + escapeHtml(name) + check + '</div>' +
             '<div class="contact-username">@' + escapeHtml(c.username || '') + '</div></div>';
           main.appendChild(el);
         })(data.contacts[i]);
@@ -446,13 +470,12 @@ function renderContacts() {
 
 // ===== НАСТРОЙКИ =====
 function renderSettings() {
+  var oxyLine = (user.oxy || 0) + ' 🔮';
   main.innerHTML =
     '<div class="settings-row" id="sAccount">' +
       '<div class="row-icon">👤</div><div class="row-body"><div class="row-title">Аккаунт</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sOxy">' +
-      '<div class="row-icon">🔮</div><div class="row-body"><div class="row-title">Окси</div><div class="row-value">' + (user.oxy || 0) + ' 🔮</div></div><div class="row-arrow">›</div></div>' +
-    '<div class="settings-row" id="sPrivacy">' +
-      '<div class="row-icon">🔒</div><div class="row-body"><div class="row-title">Конфиденциальность</div></div><div class="row-arrow">›</div></div>' +
+      '<div class="row-icon">🔮</div><div class="row-body"><div class="row-title">Окси</div><div class="row-value">' + oxyLine + '</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sNotif">' +
       '<div class="row-icon">🔔</div><div class="row-body"><div class="row-title">Уведомления</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sAbout">' +
@@ -461,8 +484,29 @@ function renderSettings() {
       '<div class="row-icon">🚪</div><div class="row-body"><div class="row-title">Выйти из аккаунта</div></div><div class="row-arrow">›</div></div>';
 
   $('sAccount').onclick = function() { setTab('profile'); };
-  $('sOxy').onclick = function() { alert('Окси — следующий шаг'); };
-  $('sPrivacy').onclick = function() { alert('Конфиденциальность — позже'); };
+  $('sOxy').onclick = function() {
+    var bal = user.oxy || 0;
+    if (user.isAdmin) {
+      var add = prompt('Баланс: ' + bal + ' 🔮\nСколько добавить? (ты админ)', '10000');
+      if (add) {
+        fetch('/api/oxy/topup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ amount: Number(add) })
+        })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+            user.oxy = d.balance;
+            localStorage.setItem('user', JSON.stringify(user));
+            alert('Готово. Баланс: ' + d.balance + ' 🔮');
+            renderSettings();
+          });
+      }
+    } else {
+      alert('Баланс: ' + bal + ' 🔮');
+    }
+  };
   $('sNotif').onclick = function() { alert('Уведомления — позже'); };
   $('sAbout').onclick = function() { alert('Версия 1.0.0'); };
   $('sLogout').onclick = function() {
@@ -481,11 +525,12 @@ function renderProfile() {
   var initial = name.charAt(0).toUpperCase();
   var avStyle = user.avatar ? 'style="background-image:url(' + user.avatar + ')"' : '';
   var avText = user.avatar ? '' : initial;
+  var check = creatorBadge(user.isCreator);
 
   main.innerHTML =
     '<div class="profile-top">' +
       '<div class="profile-avatar" id="pAvatar" ' + avStyle + '>' + avText + '<div class="cam">📷</div></div>' +
-      '<div class="profile-name">' + escapeHtml(name) + '</div>' +
+      '<div class="profile-name">' + escapeHtml(name) + check + '</div>' +
       '<div class="profile-username">' + escapeHtml(username) + '</div>' +
       '<div class="profile-id">ID: ' + (user.id || '?') + '</div>' +
     '</div>' +
@@ -497,14 +542,19 @@ function renderProfile() {
     '<div class="profile-info">' +
       '<div class="profile-info-row"><div class="val">' + escapeHtml(user.login || '') + '</div><div class="lbl">Логин</div></div>' +
       '<div class="profile-info-row"><div class="val">' + escapeHtml(username) + '</div><div class="lbl">Имя пользователя</div></div>' +
+      '<div class="profile-info-row"><div class="val">' + (user.oxy || 0) + ' 🔮</div><div class="lbl">Баланс Окси</div></div>' +
     '</div>';
 
   $('pAvatar').onclick = function() { $('avatarInput').click(); };
   $('pPhoto').onclick = function() { $('avatarInput').click(); };
   $('pEdit').onclick = function() { openEditName(); };
   $('pUsername').onclick = function() { openEditUsername(); };
+
+  var cc = main.querySelector('.creator-check');
+  if (cc) cc.onclick = function() { $('creatorModal').classList.add('on'); };
 }
 
+$('creatorClose').onclick = function() { $('creatorModal').classList.remove('on'); };
 // ===== КОМНАТА =====
 function openRoom(chatId, name, other) {
   currentRoom = { id: chatId, name: name, other: other };
@@ -578,9 +628,10 @@ $('searchInput').addEventListener('input', function() {
       }
       for (var i = 0; i < data.users.length; i++) {
         (function(u) {
+          var check = creatorBadge(u.isCreator);
           var el = document.createElement('div');
           el.className = 'search-result';
-          el.innerHTML = '<div style="flex:1"><div class="n">' + escapeHtml(u.name || 'Без имени') + '</div>' +
+          el.innerHTML = '<div style="flex:1"><div class="n">' + escapeHtml(u.name || 'Без имени') + check + '</div>' +
             '<div class="u">@' + escapeHtml(u.username || '') + '</div></div>' +
             '<button>Написать</button>';
           el.querySelector('button').onclick = function() {
@@ -746,4 +797,4 @@ $('createBtn').onclick = function() {
 setTab('chats');
 </script>
 </body>
-     </html>
+</html>
