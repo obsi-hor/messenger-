@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#17212b">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <title>Вход</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -99,7 +102,7 @@
 <!-- 2FA -->
 <div class="screen hidden" id="mode-2fa">
   <h1>Двухфакторная защита</h1>
-  <div class="subtitle">Введите пароль 2FA и кодовое слово</div>
+  <div class="subtitle">Введите пароль 2FA и/или кодовое слово</div>
   <div class="field">
     <label>Пароль 2FA</label>
     <input id="faPassword" type="password" placeholder="пароль 2FA">
@@ -116,7 +119,7 @@
 <!-- РЕГИСТРАЦИЯ -->
 <div class="screen hidden" id="mode-register">
   <h1>Регистрация</h1>
-  <div class="subtitle">Придумайте логин и пароль</div>
+  <div class="subtitle">Придумайте логин, юзернейм и пароль</div>
   <div class="field">
     <label>Логин</label>
     <input id="regLogin" type="text" placeholder="ваш_логин" autocomplete="username" autocapitalize="off">
@@ -125,10 +128,10 @@
     <label>Имя</label>
     <input id="regName" type="text" placeholder="Как вас зовут" maxlength="64">
   </div>
- <div class="field">
-  <label>Юзернейм</label>
-  <input id="regUsername" type="text" placeholder="ваш_юзернейм" maxlength="16" autocapitalize="off">
- </div>
+  <div class="field">
+    <label>Юзернейм</label>
+    <input id="regUsername" type="text" placeholder="ваш_юзернейм" maxlength="16" autocapitalize="off">
+  </div>
   <div class="field">
     <label>Пароль</label>
     <input id="regPassword" type="password" placeholder="минимум 4 символа" autocomplete="new-password">
@@ -157,7 +160,7 @@ document.querySelectorAll('.tab').forEach(function(t) {
   };
 });
 
-// ВХОД
+// ===== ВХОД =====
 $('loginBtn').onclick = function() {
   var login = $('loginLogin').value.trim().toLowerCase();
   var password = $('loginPassword').value;
@@ -193,7 +196,7 @@ $('loginBtn').onclick = function() {
     .catch(function(e) { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Войти'; err.textContent = 'Сеть: ' + e.message; });
 };
 
-// 2FA
+// ===== 2FA =====
 $('faBtn').onclick = function() {
   var faPass = $('faPassword').value;
   var faWord = $('faWord').value;
@@ -230,7 +233,7 @@ $('faBack').onclick = function() {
   document.querySelector('.tab[data-mode="login"]').classList.add('on');
 };
 
-// РЕГИСТРАЦИЯ
+// ===== РЕГИСТРАЦИЯ =====
 $('regBtn').onclick = function() {
   var login = $('regLogin').value.trim().toLowerCase();
   var name = $('regName').value.trim();
@@ -275,4 +278,4 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 </body>
- </html>
+</html>
