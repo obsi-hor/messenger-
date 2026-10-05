@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Вход</title>
- <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#17212b">
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -15,14 +12,12 @@
     background: #17212b; color: #fff;
     overflow: hidden;
   }
-  body { display: flex; flex-direction: column; }
-
-  .tabs {
-    display: flex;
-    padding: 16px 20px 0;
-    padding-top: max(16px, env(safe-area-inset-top));
-    gap: 8px;
+  .wrap {
+    display: flex; flex-direction: column;
+    padding: 24px; padding-top: 40px;
+    height: 100%;
   }
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
   .tab {
     flex: 1; padding: 10px;
     background: #232e3c; border: 0;
@@ -31,160 +26,122 @@
     font-weight: 500;
   }
   .tab.on { background: #6ab2f2; color: #fff; }
-
-  .screen {
-    flex: 1; display: flex; flex-direction: column;
-    padding: 0 24px; padding-top: 32px;
-    overflow-y: auto;
+  h1 { font-size: 24px; margin: 0 0 8px; text-align: center; }
+  .sub { color: #7d8e9e; font-size: 14px; text-align: center; margin-bottom: 32px; }
+  label { display: block; font-size: 13px; color: #6ab2f2; margin: 16px 0 6px; }
+  input {
+    width: 100%; padding: 10px 2px;
+    background: transparent; border: 0;
+    border-bottom: 1px solid #2f3d4c;
+    color: #fff; font-size: 17px; outline: none;
   }
-  h1 { font-size: 24px; font-weight: 500; margin: 0 0 8px; text-align: center; }
-  .subtitle {
-    color: #7d8e9e; font-size: 14px; text-align: center;
-    margin-bottom: 32px; line-height: 1.4;
-  }
-  .field { position: relative; margin-bottom: 20px; }
-  .field label {
-    display: block; font-size: 13px; color: #6ab2f2;
-    margin-bottom: 6px; padding-left: 2px;
-  }
-  .field input {
-    width: 100%; background: transparent;
-    border: 0; border-bottom: 1px solid #2f3d4c;
-    color: #fff; font-size: 17px; padding: 10px 2px;
-    outline: none; transition: border-color .15s;
-  }
-  .field input:focus { border-color: #6ab2f2; }
-  .field input::placeholder { color: #4a5a6a; }
-
-  .btn {
-    width: 100%; padding: 15px;
+  input:focus { border-bottom-color: #6ab2f2; }
+  button.submit {
+    width: 100%; padding: 15px; margin-top: 24px;
     background: #6ab2f2; color: #fff; border: 0;
     border-radius: 10px; font-size: 16px; font-weight: 500;
-    cursor: pointer; margin-top: 8px;
+    cursor: pointer;
   }
-  .btn:hover { background: #5aa2e2; }
-  .btn:disabled { background: #2f3d4c; color: #5a6a7a; cursor: not-allowed; }
-  .error {
-    color: #e85c5c; font-size: 13px; text-align: center;
-    min-height: 18px; margin-top: 8px; margin-bottom: 8px;
-  }
+  .err { color: #e85c5c; font-size: 13px; min-height: 18px; margin-top: 12px; text-align: center; }
   .hidden { display: none; }
 </style>
 </head>
 <body>
-
-<div class="tabs" id="tabs">
-  <button class="tab on" data-mode="login">Вход</button>
-  <button class="tab" data-mode="register">Регистрация</button>
-</div>
-
-<!-- ВХОД -->
-<div class="screen" id="mode-login">
-  <h1>Вход</h1>
-  <div class="subtitle">Введите логин и пароль</div>
-  <div class="field">
-    <label>Логин</label>
-    <input id="loginLogin" type="text" placeholder="ваш_логин" autocomplete="username" autocapitalize="off">
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab on" id="tabLogin" type="button">Вход</button>
+    <button class="tab" id="tabReg" type="button">Регистрация</button>
   </div>
-  <div class="field">
+
+  <div id="loginBlock">
+    <h1>Вход</h1>
+    <div class="sub">Введите логин и пароль</div>
+    <label>Логин</label>
+    <input id="loginInput" type="text" autocomplete="off" autocapitalize="off">
     <label>Пароль</label>
-    <input id="loginPassword" type="password" placeholder="пароль" autocomplete="current-password">
+    <input id="passInput" type="password" autocomplete="off">
+    <div class="err" id="loginErr"></div>
+    <button class="submit" id="loginBtn" type="button">Войти</button>
   </div>
-  <div class="error" id="loginErr"></div>
-  <button class="btn" id="loginBtn">Войти</button>
-</div>
 
-<!-- РЕГИСТРАЦИЯ -->
-<div class="screen hidden" id="mode-register">
-  <h1>Регистрация</h1>
-  <div class="subtitle">Придумайте логин и пароль</div>
-  <div class="field">
+  <div id="regBlock" class="hidden">
+    <h1>Регистрация</h1>
+    <div class="sub">Придумайте логин и пароль</div>
     <label>Логин</label>
-    <input id="regLogin" type="text" placeholder="ваш_логин" autocomplete="username" autocapitalize="off">
-  </div>
-  <div class="field">
+    <input id="regLogin" type="text" autocomplete="off" autocapitalize="off">
     <label>Имя</label>
-    <input id="regName" type="text" placeholder="Как вас зовут" maxlength="64">
-  </div>
-  <div class="field">
+    <input id="regName" type="text" autocomplete="off">
     <label>Пароль</label>
-    <input id="regPassword" type="password" placeholder="минимум 4 символа" autocomplete="new-password">
+    <input id="regPass" type="password" autocomplete="off">
+    <div class="err" id="regErr"></div>
+    <button class="submit" id="regBtn" type="button">Создать аккаунт</button>
   </div>
-  <div class="error" id="regErr"></div>
-  <button class="btn" id="regBtn">Создать аккаунт</button>
 </div>
 
 <script>
-  const $ = id => document.getElementById(id);
-  function showScreen(name) {
-    ['mode-login', 'mode-register'].forEach(id => {
-      $(id).classList.toggle('hidden', id !== 'mode-' + name);
-    });
-  }
-  document.querySelectorAll('.tab').forEach(t => {
-    t.onclick = () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
-      t.classList.add('on');
-      showScreen(t.dataset.mode);
-    };
-  });
+  var loginBlock = document.getElementById('loginBlock');
+  var regBlock = document.getElementById('regBlock');
+  var tabLogin = document.getElementById('tabLogin');
+  var tabReg = document.getElementById('tabReg');
 
-  $('loginBtn').onclick = async () => {
-    const login = $('loginLogin').value.trim().toLowerCase();
-    const password = $('loginPassword').value;
-    const err = $('loginErr');
-    err.textContent = '';
-    if (!login || !password) { err.textContent = 'Заполните все поля'; return; }
-    $('loginBtn').disabled = true;
-    $('loginBtn').textContent = 'Вход...';
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ login, password })
-    });
-    const data = await res.json();
-    $('loginBtn').disabled = false;
-    $('loginBtn').textContent = 'Войти';
-    if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    location.href = '/app.html';
+  tabLogin.onclick = function () {
+    loginBlock.classList.remove('hidden');
+    regBlock.classList.add('hidden');
+    tabLogin.classList.add('on');
+    tabReg.classList.remove('on');
+  };
+  tabReg.onclick = function () {
+    regBlock.classList.remove('hidden');
+    loginBlock.classList.add('hidden');
+    tabReg.classList.add('on');
+    tabLogin.classList.remove('on');
   };
 
-  $('regBtn').onclick = async () => {
-    const login = $('regLogin').value.trim().toLowerCase();
-    const name = $('regName').value.trim();
-    const password = $('regPassword').value;
-    const err = $('regErr');
+  document.getElementById('loginBtn').onclick = function () {
+    var login = document.getElementById('loginInput').value.trim().toLowerCase();
+    var password = document.getElementById('passInput').value;
+    var err = document.getElementById('loginErr');
     err.textContent = '';
-    if (!login || !name || !password) { err.textContent = 'Заполните все поля'; return; }
-    if (!/^[a-z0-9_]{3,20}$/.test(login)) { err.textContent = 'Логин: 3–20, латиница, цифры, _'; return; }
+    if (!login || !password) { err.textContent = 'Заполните поля'; return; }
+    err.textContent = 'Отправка...';
+    fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login: login, password: password })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = '/app.html';
+    })
+    .catch(function (e) { err.textContent = 'Сеть: ' + e.message; });
+  };
+
+  document.getElementById('regBtn').onclick = function () {
+    var login = document.getElementById('regLogin').value.trim().toLowerCase();
+    var name = document.getElementById('regName').value.trim();
+    var password = document.getElementById('regPass').value;
+    var err = document.getElementById('regErr');
+    err.textContent = '';
+    if (!login || !name || !password) { err.textContent = 'Заполните поля'; return; }
     if (password.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
-    $('regBtn').disabled = true;
-    $('regBtn').textContent = 'Создание...';
-    const res = await fetch('/api/register', {
+    err.textContent = 'Отправка...';
+    fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ login, name, password })
-    });
-    const data = await res.json();
-    $('regBtn').disabled = false;
-    $('regBtn').textContent = 'Создать аккаунт';
-    if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    location.href = '/app.html?new=1';
+      body: JSON.stringify({ login: login, name: name, password: password })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.ok) { err.textContent = data.error || 'Ошибка'; return; }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = '/app.html?new=1';
+    })
+    .catch(function (e) { err.textContent = 'Сеть: ' + e.message; });
   };
-
-  $('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
-  $('regPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('regBtn').click(); });
- <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
-</script>
 </script>
 </body>
-  </html>
+</html>
