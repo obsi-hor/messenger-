@@ -1,4 +1,3 @@
-
 import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const B2_KEY_ID = process.env.B2_KEY_ID || '005319007b9036c0000000001';
@@ -6,7 +5,7 @@ const B2_APP_KEY = process.env.B2_APP_KEY || 'ВСТАВЬ_applicationKey';
 const B2_BUCKET = process.env.B2_BUCKET || 'messenger-oksepau';
 const B2_ENDPOINT = process.env.B2_ENDPOINT || 'https://s3.us-east-005.backblazeb2.com';
 
-const CREATOR_LOGIN = 'oksepau'; // ← ТВОЙ ЛОГИН
+const CREATOR_LOGIN = 'oksepau';
 
 export const s3 = new S3Client({
   endpoint: B2_ENDPOINT, region: 'us-east-005',
@@ -16,7 +15,12 @@ export const s3 = new S3Client({
 export const BUCKET = B2_BUCKET;
 
 const FILE_KEY = 'data.json';
-let data = { users: [], codes: [], sessions: [], chats: [], messages: [], transactions: [], registrations: [], blocks: [], contacts: [], posts: [] };
+
+let data = {
+  users: [], codes: [], sessions: [], chats: [], messages: [],
+  transactions: [], registrations: [], blocks: [], contacts: [],
+  posts: [], nextNftNumber: 1
+};
 let loaded = false;
 let dirty = false;
 let saveTimer = null;
@@ -42,31 +46,26 @@ export async function loadData() {
     data.blocks = data.blocks || [];
     data.contacts = data.contacts || [];
     data.posts = data.posts || [];
+    if (!data.nextNftNumber) data.nextNftNumber = 1;
 
-    // ===== УДАЛЯЕМ ВСЕХ, КРОМЕ СОЗДАТЕЛЯ =====
+    // чистим всех, кроме создателя
     const creator = data.users.find(u => u.login === CREATOR_LOGIN);
     if (creator) {
       const keepId = creator.id;
       data.users = [creator];
-      data.chats = data.chats.filter(c => c.members.includes(keepId) && c.members.every(m => m === keepId));
-      data.messages = data.messages.filter(m => {
-        const chat = data.chats.find(c => c.id === m.chat_id);
-        return !!chat;
-      });
+      data.chats = [];
+      data.messages = [];
       data.transactions = data.transactions.filter(t => t.user_id === keepId);
-      data.contacts = data.contacts.filter(c => c.userId === keepId);
+      data.contacts = [];
       data.blocks = [];
       data.sessions = data.sessions.filter(s => s.user_id === keepId);
-
-      // даём админа и создателя
       creator.isAdmin = true;
       creator.isCreator = true;
       creator.oxy = 999999999;
-      if (creator.bio && creator.bio.length > 100) {
-        creator.bio = creator.bio.slice(0, 100);
-      }
+      if (!creator.nfts) creator.nfts = [];
+      if (!creator.gifts) creator.gifts = [];
+      if (!creator.profileNft) creator.profileNft = null;
     } else {
-      // создателя нет — очищаем всех
       data.users = [];
       data.chats = [];
       data.messages = [];
@@ -75,24 +74,24 @@ export async function loadData() {
       data.blocks = [];
     }
 
-    // миграция оставшихся
     data.users.forEach(u => {
       if (u.hidden === undefined) u.hidden = false;
       if (u.bio === undefined) u.bio = '';
       if (u.avatar === undefined) u.avatar = '';
       if (u.oxy === undefined) u.oxy = 0;
       if (u.gifts === undefined) u.gifts = [];
+      if (u.nfts === undefined) u.nfts = [];
+      if (u.profileNft === undefined) u.profileNft = null;
       if (u.extraUsernames === undefined) u.extraUsernames = [];
       if (u.isAdmin === undefined) u.isAdmin = false;
       if (u.isCreator === undefined) u.isCreator = false;
     });
   } catch (e) {
     if (e.name === 'NoSuchKey' || e.$metadata?.httpStatusCode === 404) {
-      data = { users: [], codes: [], sessions: [], chats: [], messages: [], transactions: [], registrations: [], blocks: [], contacts: [], posts: [] };
+      data = { users: [], codes: [], sessions: [], chats: [], messages: [], transactions: [], registrations: [], blocks: [], contacts: [], posts: [], nextNftNumber: 1 };
     } else console.error('B2 load error:', e.message);
   }
   loaded = true;
-  // принудительно сохраняем очищенную базу
   markDirty();
 }
 
@@ -131,13 +130,6 @@ export function findUserByUsername(username) {
     x.username === u || (x.extraUsernames || []).includes(u)
   ) || null;
 }
-export function usernameExists(username) {
-  if (!username) return false;
-  const u = username.toLowerCase().trim();
-  return data.users.some(x =>
-    x.username === u || (x.extraUsernames || []).includes(u)
-  );
-}
 export function createUser({ login, passwordHash }) {
   const id = (data.users.at(-1)?.id || 0) + 1;
   const user = {
@@ -145,7 +137,7 @@ export function createUser({ login, passwordHash }) {
     username: null, extraUsernames: [], name: null, bio: '', avatar: '', hidden: false,
     birthday: null, lastSeen: Date.now(), online: true,
     showPhone: 'all', showLastSeen: 'all', showBio: 'all', showBirthday: 'all',
-    oxy: 0, gifts: [],
+    oxy: 0, gifts: [], nfts: [], profileNft: null,
     twofaPassword: null, twofaWord: null,
     isAdmin: false, isCreator: false,
     created_at: Date.now()
@@ -157,10 +149,6 @@ export function createUser({ login, passwordHash }) {
 export function updateUser(id, patch) {
   const u = findUserById(id); if (!u) return null;
   Object.assign(u, patch); markDirty(); return u;
-}
-export function setHidden(id, hidden) {
-  const u = findUserById(id); if (!u) return null;
-  u.hidden = !!hidden; markDirty(); return u;
 }
 export function setOnline(id, online) {
   const u = findUserById(id); if (!u) return null;
@@ -237,13 +225,14 @@ export function getUserChats(userId) {
 }
 
 // ===== MESSAGES =====
-export function createMessage(chatId, fromUser, text, image = null, replyTo = null) {
+export function createMessage(chatId, fromUser, text, image = null, replyTo = null, extra = null) {
   const id = (data.messages.at(-1)?.id || 0) + 1;
   const msg = {
     id, chat_id: chatId, from_user: fromUser,
     text: text || '', image: image || null, reply_to: replyTo,
     read_by: [fromUser], created_at: Date.now()
   };
+  if (extra) Object.assign(msg, extra);
   data.messages.push(msg);
   markDirty();
   return msg;
@@ -270,4 +259,163 @@ export function markChatRead(chatId, userId) {
   });
   if (changed) markDirty();
   return changed;
-                     }
+}
+
+// ===== ORDINARY GIFTS =====
+const GIFT_PRICES = { pistol: 25, car: 50, heart: 15, bday: 20 };
+
+export function sendGift(fromId, toId, giftId, price) {
+  const from = findUserById(fromId);
+  const to = findUserById(toId);
+  if (!from || !to) return { error: 'Не найден' };
+  if ((from.oxy || 0) < price) return { error: 'Недостаточно Окси' };
+  from.oxy -= price;
+  if (!to.gifts) to.gifts = [];
+  to.gifts.push({ giftId, fromId, ts: Date.now() });
+  data.transactions.push({
+    id: (data.transactions.at(-1)?.id || 0) + 1,
+    user_id: fromId, amount: -price, reason: `Подарок: ${giftId}`, ts: Date.now()
+  });
+  markDirty();
+  return { ok: true };
+}
+
+export function sellGift(userId, giftIndex) {
+  const u = findUserById(userId);
+  if (!u || !u.gifts || !u.gifts[giftIndex]) return { error: 'Не найден' };
+  const gift = u.gifts[giftIndex];
+  const base = GIFT_PRICES[gift.giftId] || 10;
+  const commission = Math.ceil(base * 0.05);
+  const payout = base - commission;
+  u.gifts.splice(giftIndex, 1);
+  u.oxy = (u.oxy || 0) + payout;
+  data.transactions.push({
+    id: (data.transactions.at(-1)?.id || 0) + 1,
+    user_id: userId, amount: payout,
+    reason: `Продажа подарка (комиссия ${commission})`, ts: Date.now()
+  });
+  markDirty();
+  return { ok: true, payout, commission, balance: u.oxy };
+}
+
+// ===== NFT =====
+const NFT_PRICES = { rose: 1500, orb: 1000, slime: 2000 };
+
+export function buyNft(userId, nftType) {
+  const u = findUserById(userId);
+  if (!u) return { error: 'Пользователь не найден' };
+  const price = NFT_PRICES[nftType];
+  if (!price) return { error: 'Неверный тип NFT' };
+  if ((u.oxy || 0) < price) return { error: 'Недостаточно Окси' };
+
+  u.oxy -= price;
+  const number = data.nextNftNumber;
+  data.nextNftNumber = number + 1;
+
+  const nft = {
+    id: 'nft_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    type: nftType,
+    number: number,
+    ownerId: userId,
+    boughtAt: Date.now()
+  };
+  if (!u.nfts) u.nfts = [];
+  u.nfts.push(nft);
+
+  data.transactions.push({
+    id: (data.transactions.at(-1)?.id || 0) + 1,
+    user_id: userId, amount: -price,
+    reason: `Куплено NFT #${number}`, ts: Date.now()
+  });
+  markDirty();
+  return { ok: true, nft: nft, balance: u.oxy };
+}
+
+export function sellNft(userId, nftId) {
+  const u = findUserById(userId);
+  if (!u || !u.nfts) return { error: 'Не найден' };
+  const idx = u.nfts.findIndex(n => n.id === nftId);
+  if (idx === -1) return { error: 'NFT не найден' };
+  const nft = u.nfts[idx];
+  const base = NFT_PRICES[nft.type] || 0;
+  const commission = Math.ceil(base * 0.05);
+  const payout = base - commission;
+
+  u.nfts.splice(idx, 1);
+  u.oxy = (u.oxy || 0) + payout;
+  if (u.profileNft === nftId) u.profileNft = null;
+
+  data.transactions.push({
+    id: (data.transactions.at(-1)?.id || 0) + 1,
+    user_id: userId, amount: payout,
+    reason: `Продажа NFT #${nft.number} (комиссия ${commission})`, ts: Date.now()
+  });
+  markDirty();
+  return { ok: true, payout, commission, balance: u.oxy };
+}
+
+export function setProfileNft(userId, nftId) {
+  const u = findUserById(userId);
+  if (!u || !u.nfts) return { error: 'Не найден' };
+  if (nftId === null) { u.profileNft = null; markDirty(); return { ok: true }; }
+  const nft = u.nfts.find(n => n.id === nftId);
+  if (!nft) return { error: 'NFT не найден' };
+  u.profileNft = nftId;
+  markDirty();
+  return { ok: true };
+}
+
+export function giveNft(fromId, toId, nftId) {
+  const from = findUserById(fromId);
+  const to = findUserById(toId);
+  if (!from || !to) return { error: 'Не найден' };
+  if (!from.nfts) return { error: 'Нет NFT' };
+  const idx = from.nfts.findIndex(n => n.id === nftId);
+  if (idx === -1) return { error: 'NFT не найден' };
+  const nft = from.nfts[idx];
+  from.nfts.splice(idx, 1);
+  nft.ownerId = toId;
+  if (!to.nfts) to.nfts = [];
+  to.nfts.push(nft);
+  if (from.profileNft === nftId) from.profileNft = null;
+  markDirty();
+  return { ok: true, nft: nft };
+}
+
+export function getNftPrices() { return NFT_PRICES; }
+
+// ===== CONTACTS =====
+export function addContact(userId, contactId) {
+  if (userId === contactId) return { error: 'Нельзя себя' };
+  if (data.contacts.some(c => c.userId === userId && c.contactId === contactId)) return { ok: true };
+  data.contacts.push({ userId, contactId, ts: Date.now() });
+  markDirty();
+  return { ok: true };
+}
+export function removeContact(userId, contactId) {
+  data.contacts = data.contacts.filter(c => !(c.userId === userId && c.contactId === contactId));
+  markDirty();
+  return { ok: true };
+}
+export function getContacts(userId) {
+  return data.contacts.filter(c => c.userId === userId).map(c => {
+    const u = findUserById(c.contactId);
+    if (!u) return null;
+    return {
+      id: u.id, name: u.name, username: u.username, avatar: u.avatar,
+      online: !!u.online, lastSeen: u.lastSeen, isCreator: !!u.isCreator
+    };
+  }).filter(Boolean);
+}
+export function isContact(userId, contactId) {
+  return data.contacts.some(c => c.userId === userId && c.contactId === contactId);
+}
+
+// ===== REGISTRATION IP LIMIT =====
+export function getIpRegistrations(ip) {
+  return data.registrations.filter(r => r.ip === ip);
+}
+export function addIpRegistration(ip, userId) {
+  data.registrations.push({ ip, user_id: userId, ts: Date.now() });
+  markDirty();
+}
