@@ -116,7 +116,7 @@
     flex-shrink: 0;
   }
 
-  /* модалка поиска */
+  /* модалка */
   .modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.7);
@@ -134,10 +134,16 @@
     color: #fff; padding: 12px 16px; border-radius: 10px;
     font-size: 15px; outline: none;
   }
-  .modal-body button {
-    width: 100%; padding: 12px; margin-top: 12px;
+  .modal-body .err { color: #e85c5c; font-size: 13px; text-align: center; margin-top: 8px; min-height: 16px; }
+  .modal-body .close {
+    width: 100%; padding: 12px; margin-top: 8px;
     background: transparent; color: #6ab2f2;
     border: 0; border-radius: 10px; font-size: 15px; cursor: pointer;
+  }
+  .modal-body .save {
+    width: 100%; padding: 12px; margin-top: 12px;
+    background: #6ab2f2; color: #fff; border: 0;
+    border-radius: 10px; font-size: 15px; cursor: pointer;
   }
   .search-result {
     padding: 10px; margin-top: 12px;
@@ -152,6 +158,80 @@
     border-radius: 8px; font-size: 13px;
     margin: 0; cursor: pointer;
   }
+
+  /* профиль */
+  .profile-top {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 20px;
+  }
+  .profile-avatar {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 42px; font-weight: 500; text-transform: uppercase;
+    background-size: cover; background-position: center;
+    cursor: pointer; position: relative; margin-bottom: 14px;
+  }
+  .profile-avatar .cam {
+    position: absolute; right: -4px; bottom: -4px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #6ab2f2; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; border: 3px solid #17212b;
+  }
+  .profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
+  .profile-id { font-size: 13px; color: #5a6a7a; }
+  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin-bottom: 16px; }
+  .profile-action {
+    flex: 1; background: #232e3c; border-radius: 12px;
+    padding: 12px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px; cursor: pointer;
+  }
+  .profile-action .ico { font-size: 22px; color: #6ab2f2; }
+  .profile-action .lbl { font-size: 12px; color: #fff; }
+  .profile-info {
+    background: #232e3c; border-radius: 14px;
+    margin: 0 12px 12px; overflow: hidden;
+  }
+  .profile-info-row { padding: 12px 16px; border-bottom: 1px solid #2f3d4c; }
+  .profile-info-row:last-child { border-bottom: 0; }
+  .profile-info-row .val { font-size: 16px; word-wrap: break-word; }
+  .profile-info-row .lbl { font-size: 13px; color: #7d8e9e; margin-top: 3px; }
+
+  /* настройки */
+  .settings-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px; min-height: 56px;
+    cursor: pointer;
+    border-bottom: 1px solid #0f171f;
+  }
+  .settings-row:hover { background: #232e3c; }
+  .settings-row .row-icon { width: 24px; text-align: center; font-size: 18px; color: #6ab2f2; }
+  .settings-row .row-body { flex: 1; min-width: 0; }
+  .settings-row .row-title { font-size: 15px; }
+  .settings-row .row-value { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
+  .settings-row .row-arrow { color: #3a4a5a; font-size: 16px; }
+  .settings-row.danger .row-title { color: #e85c5c; }
+  .settings-row.danger .row-icon { color: #e85c5c; }
+
+  /* контакты */
+  .contact-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; min-height: 64px; cursor: pointer;
+  }
+  .contact-item:hover { background: #232e3c; }
+  .contact-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #6ab2f2, #4a8ec2);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; flex-shrink: 0; text-transform: uppercase;
+    background-size: cover; background-position: center;
+  }
+  .contact-body { flex: 1; min-width: 0; }
+  .contact-name { font-size: 15px; font-weight: 500; }
+  .contact-username { font-size: 13px; color: #7d8e9e; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -190,10 +270,44 @@
     <h3>Найти пользователя</h3>
     <input id="searchInput" placeholder="юзернейм" autocomplete="off">
     <div id="searchResults"></div>
-    <button id="searchClose">Закрыть</button>
+    <button class="close" id="searchClose">Закрыть</button>
   </div>
 </div>
 
+<!-- модалка имени -->
+<div class="modal" id="editNameModal">
+  <div class="modal-body">
+    <h3>Изменить имя</h3>
+    <input id="editNameInput" placeholder="Ваше имя" maxlength="64">
+    <div class="err" id="editNameErr"></div>
+    <button class="save" id="editNameSave">Сохранить</button>
+    <button class="close" id="editNameClose">Отмена</button>
+  </div>
+</div>
+
+<!-- модалка юзернейма -->
+<div class="modal" id="editUsernameModal">
+  <div class="modal-body">
+    <h3>Юзернейм</h3>
+    <input id="editUsernameInput" placeholder="ivan_ivanov" maxlength="16">
+    <div class="err" id="editUsernameErr"></div>
+    <button class="save" id="editUsernameSave">Сохранить</button>
+    <button class="close" id="editUsernameClose">Отмена</button>
+  </div>
+</div>
+
+<!-- модалка добавления контакта -->
+<div class="modal" id="addContactModal">
+  <div class="modal-body">
+    <h3>Добавить контакт</h3>
+    <input id="addContactInput" placeholder="юзернейм" autocomplete="off">
+    <div class="err" id="addContactErr"></div>
+    <button class="save" id="addContactBtn">Добавить</button>
+    <button class="close" id="addContactClose">Отмена</button>
+  </div>
+</div>
+
+<input type="file" id="avatarInput" accept="image/*" style="display:none">
 <script>
 var token = localStorage.getItem('token');
 if (!token) { window.location.href = '/login.html'; }
@@ -213,7 +327,6 @@ function escapeHtml(s) {
     return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
   });
 }
-
 function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 }
@@ -244,14 +357,34 @@ function setTab(tab) {
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].classList.toggle('on', buttons[i].getAttribute('data-tab') === tab);
   }
-  if (tab === 'chats') { title.textContent = 'Чаты'; renderChats(); }
-  else if (tab === 'contacts') { title.textContent = 'Контакты'; renderContacts(); }
-  else if (tab === 'settings') { title.textContent = 'Настройки'; renderSettings(); }
-  else if (tab === 'profile') { title.textContent = 'Профиль'; renderProfile(); }
+  if (tab === 'chats') {
+    title.textContent = 'Чаты';
+    $('searchBtn').style.visibility = 'visible';
+    $('createBtn').style.visibility = 'hidden';
+    renderChats();
+  } else if (tab === 'contacts') {
+    title.textContent = 'Контакты';
+    $('searchBtn').style.visibility = 'hidden';
+    $('createBtn').style.visibility = 'visible';
+    renderContacts();
+  } else if (tab === 'settings') {
+    title.textContent = 'Настройки';
+    $('searchBtn').style.visibility = 'hidden';
+    $('createBtn').style.visibility = 'hidden';
+    renderSettings();
+  } else if (tab === 'profile') {
+    title.textContent = 'Профиль';
+    $('searchBtn').style.visibility = 'hidden';
+    $('createBtn').style.visibility = 'hidden';
+    renderProfile();
+  }
 }
-document.querySelectorAll('nav button').forEach(function(b) {
-  b.onclick = function() { setTab(b.getAttribute('data-tab')); };
-});
+var navButtons = document.querySelectorAll('nav button');
+for (var i = 0; i < navButtons.length; i++) {
+  (function(btn) {
+    btn.onclick = function() { setTab(btn.getAttribute('data-tab')); };
+  })(navButtons[i]);
+}
 
 // ===== ЧАТЫ =====
 function renderChats() {
@@ -264,48 +397,112 @@ function renderChats() {
         return;
       }
       main.innerHTML = '';
-      data.chats.forEach(function(c) {
-        var name = (c.other && (c.other.name || c.other.username)) || 'Чат';
-        var initial = name.charAt(0).toUpperCase();
-        var last = (c.last && c.last.text) || 'Нет сообщений';
-        var el = document.createElement('div');
-        el.className = 'chat-item';
-        el.innerHTML = '<div class="chat-avatar">' + initial + '</div>' +
-          '<div class="chat-body"><div class="chat-title">' + escapeHtml(name) + '</div>' +
-          '<div class="chat-last">' + escapeHtml(last) + '</div></div>';
-        el.onclick = function() { openRoom(c.id, name, c.other); };
-        main.appendChild(el);
-      });
+      for (var i = 0; i < data.chats.length; i++) {
+        (function(c) {
+          var name = (c.other && (c.other.name || c.other.username)) || 'Чат';
+          var initial = name.charAt(0).toUpperCase();
+          var last = (c.last && c.last.text) || 'Нет сообщений';
+          var el = document.createElement('div');
+          el.className = 'chat-item';
+          el.innerHTML = '<div class="chat-avatar">' + initial + '</div>' +
+            '<div class="chat-body"><div class="chat-title">' + escapeHtml(name) + '</div>' +
+            '<div class="chat-last">' + escapeHtml(last) + '</div></div>';
+          el.onclick = function() { openRoom(c.id, name, c.other); };
+          main.appendChild(el);
+        })(data.chats[i]);
+      }
     })
-    .catch(function(e) { main.innerHTML = '<div class="empty"><h2>Ошибка</h2><p>' + escapeHtml(e.message) + '</p></div>'; });
+    .catch(function(e) {
+      main.innerHTML = '<div class="empty"><h2>Ошибка</h2><p>' + escapeHtml(e.message) + '</p></div>';
+    });
 }
 
 // ===== КОНТАКТЫ =====
 function renderContacts() {
-  main.innerHTML = '<div class="empty"><div class="icon">👥</div><h2>Контакты</h2><p>Скоро</p></div>';
+  main.innerHTML = '<div class="empty"><h2>Загрузка...</h2></div>';
+  fetch('/api/contacts', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.contacts || !data.contacts.length) {
+        main.innerHTML = '<div class="empty"><div class="icon">👥</div><h2>Пока пусто</h2><p>Нажми ✏️ и добавь контакт</p></div>';
+        return;
+      }
+      main.innerHTML = '';
+      for (var i = 0; i < data.contacts.length; i++) {
+        (function(c) {
+          var name = c.name || c.username || 'Без имени';
+          var initial = name.charAt(0).toUpperCase();
+          var el = document.createElement('div');
+          el.className = 'contact-item';
+          el.innerHTML = '<div class="contact-avatar">' + initial + '</div>' +
+            '<div class="contact-body"><div class="contact-name">' + escapeHtml(name) + '</div>' +
+            '<div class="contact-username">@' + escapeHtml(c.username || '') + '</div></div>';
+          main.appendChild(el);
+        })(data.contacts[i]);
+      }
+    })
+    .catch(function() { main.innerHTML = '<div class="empty"><h2>Ошибка</h2></div>'; });
 }
 
 // ===== НАСТРОЙКИ =====
 function renderSettings() {
-  main.innerHTML = '<div class="empty"><div class="icon">⚙️</div><h2>Настройки</h2><p>Скоро</p></div>';
+  main.innerHTML =
+    '<div class="settings-row" id="sAccount">' +
+      '<div class="row-icon">👤</div><div class="row-body"><div class="row-title">Аккаунт</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row" id="sOxy">' +
+      '<div class="row-icon">🔮</div><div class="row-body"><div class="row-title">Окси</div><div class="row-value">' + (user.oxy || 0) + ' 🔮</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row" id="sPrivacy">' +
+      '<div class="row-icon">🔒</div><div class="row-body"><div class="row-title">Конфиденциальность</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row" id="sNotif">' +
+      '<div class="row-icon">🔔</div><div class="row-body"><div class="row-title">Уведомления</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row" id="sAbout">' +
+      '<div class="row-icon">ℹ️</div><div class="row-body"><div class="row-title">О приложении</div><div class="row-value">Версия 1.0.0</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row danger" id="sLogout">' +
+      '<div class="row-icon">🚪</div><div class="row-body"><div class="row-title">Выйти из аккаунта</div></div><div class="row-arrow">›</div></div>';
+
+  $('sAccount').onclick = function() { setTab('profile'); };
+  $('sOxy').onclick = function() { alert('Окси — следующий шаг'); };
+  $('sPrivacy').onclick = function() { alert('Конфиденциальность — позже'); };
+  $('sNotif').onclick = function() { alert('Уведомления — позже'); };
+  $('sAbout').onclick = function() { alert('Версия 1.0.0'); };
+  $('sLogout').onclick = function() {
+    if (confirm('Выйти из аккаунта?')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login.html';
+    }
+  };
 }
 
 // ===== ПРОФИЛЬ =====
 function renderProfile() {
   var name = user.name || 'Без имени';
-  var username = user.username ? '@' + user.username : '';
-  main.innerHTML = '<div style="text-align:center;padding:24px">' +
-    '<div style="font-size:22px">' + escapeHtml(name) + '</div>' +
-    '<div style="color:#7d8e9e;margin-top:4px">' + escapeHtml(username) + '</div>' +
-    '<div style="color:#5a6a7a;margin-top:8px">ID: ' + (user.id || '?') + '</div>' +
-    '<button id="logoutBtn" style="margin-top:24px;padding:12px 24px;background:#232e3c;color:#e85c5c;border:0;border-radius:10px;font-size:15px">Выйти</button>' +
+  var username = user.username ? '@' + user.username : '@без_юзернейма';
+  var initial = name.charAt(0).toUpperCase();
+  var avStyle = user.avatar ? 'style="background-image:url(' + user.avatar + ')"' : '';
+  var avText = user.avatar ? '' : initial;
+
+  main.innerHTML =
+    '<div class="profile-top">' +
+      '<div class="profile-avatar" id="pAvatar" ' + avStyle + '>' + avText + '<div class="cam">📷</div></div>' +
+      '<div class="profile-name">' + escapeHtml(name) + '</div>' +
+      '<div class="profile-username">' + escapeHtml(username) + '</div>' +
+      '<div class="profile-id">ID: ' + (user.id || '?') + '</div>' +
+    '</div>' +
+    '<div class="profile-actions">' +
+      '<div class="profile-action" id="pPhoto"><div class="ico">📷</div><div class="lbl">Фото</div></div>' +
+      '<div class="profile-action" id="pEdit"><div class="ico">✏️</div><div class="lbl">Имя</div></div>' +
+      '<div class="profile-action" id="pUsername"><div class="ico">@</div><div class="lbl">Юзернейм</div></div>' +
+    '</div>' +
+    '<div class="profile-info">' +
+      '<div class="profile-info-row"><div class="val">' + escapeHtml(user.login || '') + '</div><div class="lbl">Логин</div></div>' +
+      '<div class="profile-info-row"><div class="val">' + escapeHtml(username) + '</div><div class="lbl">Имя пользователя</div></div>' +
     '</div>';
-  var lb = $('logoutBtn');
-  if (lb) lb.onclick = function() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login.html';
-  };
+
+  $('pAvatar').onclick = function() { $('avatarInput').click(); };
+  $('pPhoto').onclick = function() { $('avatarInput').click(); };
+  $('pEdit').onclick = function() { openEditName(); };
+  $('pUsername').onclick = function() { openEditUsername(); };
 }
 
 // ===== КОМНАТА =====
@@ -320,7 +517,9 @@ function openRoom(chatId, name, other) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       $('roomMessages').innerHTML = '';
-      if (data.messages) data.messages.forEach(addMessage);
+      if (data.messages) {
+        for (var i = 0; i < data.messages.length; i++) addMessage(data.messages[i]);
+      }
       $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
     })
     .catch(function() {
@@ -377,38 +576,174 @@ $('searchInput').addEventListener('input', function() {
         results.innerHTML = '<div style="color:#5a6a7a;font-size:13px;text-align:center;margin-top:12px">Никого не найдено</div>';
         return;
       }
-      data.users.forEach(function(u) {
-        var el = document.createElement('div');
-        el.className = 'search-result';
-        el.innerHTML = '<div style="flex:1"><div class="n">' + escapeHtml(u.name || 'Без имени') + '</div>' +
-          '<div class="u">@' + escapeHtml(u.username || '') + '</div></div>' +
-          '<button>Написать</button>';
-        el.querySelector('button').onclick = function() {
-          fetch('/api/chats/create', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({ userId: u.id })
-          })
-            .then(function(r) { return r.json(); })
-            .then(function(rd) {
-              if (!rd.ok) { alert(rd.error || 'Ошибка'); return; }
-              $('searchModal').classList.remove('on');
-              if (currentTab !== 'chats') setTab('chats');
-              openRoom(rd.chatId, u.name || u.username, u);
-            });
-        };
-        results.appendChild(el);
-      });
+      for (var i = 0; i < data.users.length; i++) {
+        (function(u) {
+          var el = document.createElement('div');
+          el.className = 'search-result';
+          el.innerHTML = '<div style="flex:1"><div class="n">' + escapeHtml(u.name || 'Без имени') + '</div>' +
+            '<div class="u">@' + escapeHtml(u.username || '') + '</div></div>' +
+            '<button>Написать</button>';
+          el.querySelector('button').onclick = function() {
+            fetch('/api/chats/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              },
+              body: JSON.stringify({ userId: u.id })
+            })
+              .then(function(r) { return r.json(); })
+              .then(function(rd) {
+                if (!rd.ok) { alert(rd.error || 'Ошибка'); return; }
+                $('searchModal').classList.remove('on');
+                if (currentTab !== 'chats') setTab('chats');
+                openRoom(rd.chatId, u.name || u.username, u);
+              });
+          };
+          results.appendChild(el);
+        })(data.users[i]);
+      }
     });
 });
 
-$('createBtn').onclick = function() { alert('Создать — позже'); };
+// ===== ИЗМЕНЕНИЕ ИМЕНИ =====
+function openEditName() {
+  $('editNameInput').value = user.name || '';
+  $('editNameErr').textContent = '';
+  $('editNameModal').classList.add('on');
+  $('editNameInput').focus();
+}
+$('editNameClose').onclick = function() { $('editNameModal').classList.remove('on'); };
+$('editNameSave').onclick = function() {
+  var name = $('editNameInput').value.trim();
+  if (!name) { $('editNameErr').textContent = 'Введите имя'; return; }
+  fetch('/api/profile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ name: name })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.ok) { $('editNameErr').textContent = d.error || 'Ошибка'; return; }
+      user.name = name;
+      localStorage.setItem('user', JSON.stringify(user));
+      $('editNameModal').classList.remove('on');
+      renderProfile();
+    })
+    .catch(function() { $('editNameErr').textContent = 'Ошибка сети'; });
+};
+
+// ===== ИЗМЕНЕНИЕ ЮЗЕРНЕЙМА =====
+function openEditUsername() {
+  $('editUsernameInput').value = user.username || '';
+  $('editUsernameErr').textContent = '';
+  $('editUsernameModal').classList.add('on');
+  $('editUsernameInput').focus();
+}
+$('editUsernameClose').onclick = function() { $('editUsernameModal').classList.remove('on'); };
+$('editUsernameSave').onclick = function() {
+  var username = $('editUsernameInput').value.trim().toLowerCase();
+  if (!/^[a-z0-9_]{5,16}$/.test(username)) {
+    $('editUsernameErr').textContent = '5–16, латиница, цифры, _';
+    return;
+  }
+  fetch('/api/profile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ username: username })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.ok) { $('editUsernameErr').textContent = d.error || 'Ошибка'; return; }
+      user.username = username;
+      localStorage.setItem('user', JSON.stringify(user));
+      $('editUsernameModal').classList.remove('on');
+      renderProfile();
+    })
+    .catch(function() { $('editUsernameErr').textContent = 'Ошибка сети'; });
+};
+
+// ===== АВАТАР =====
+$('avatarInput').onchange = function() {
+  var file = $('avatarInput').files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    var buf = reader.result;
+    fetch('/api/avatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Authorization': 'Bearer ' + token
+      },
+      body: buf
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.ok) { alert(d.error || 'Ошибка'); return; }
+        user.avatar = d.avatar;
+        localStorage.setItem('user', JSON.stringify(user));
+        $('avatarInput').value = '';
+        renderProfile();
+      })
+      .catch(function() { alert('Ошибка сети'); });
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+// ===== ДОБАВЛЕНИЕ КОНТАКТА =====
+$('addContactClose').onclick = function() { $('addContactModal').classList.remove('on'); };
+$('addContactBtn').onclick = function() {
+  var q = $('addContactInput').value.trim().toLowerCase();
+  var err = $('addContactErr');
+  err.textContent = '';
+  if (!q) { err.textContent = 'Введите юзернейм'; return; }
+  fetch('/api/search?q=' + encodeURIComponent(q), {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.users || !data.users.length) { err.textContent = 'Не найдено'; return; }
+      var u = data.users[0];
+      fetch('/api/contacts/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ userId: u.id })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (!d.ok) { err.textContent = d.error || 'Ошибка'; return; }
+          $('addContactModal').classList.remove('on');
+          if (currentTab === 'contacts') renderContacts();
+        })
+        .catch(function() { err.textContent = 'Ошибка'; });
+    })
+    .catch(function() { err.textContent = 'Ошибка'; });
+};
+
+// ===== КНОПКА ✏️ =====
+$('createBtn').onclick = function() {
+  if (currentTab === 'contacts') {
+    $('addContactInput').value = '';
+    $('addContactErr').textContent = '';
+    $('addContactModal').classList.add('on');
+    $('addContactInput').focus();
+  } else {
+    alert('Создать — позже');
+  }
+};
 
 // ===== СТАРТ =====
 setTab('chats');
 </script>
 </body>
-</html>
+     </html>
