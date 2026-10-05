@@ -16,25 +16,13 @@
     overflow: hidden;
   }
   body { display: flex; flex-direction: column; }
-  #appScreen { flex: 1; display: flex; flex-direction: column; position: relative; }
-
-  /* фон профиля */
-  #profileBg {
-    position: absolute; inset: 0;
-    display: none; z-index: 0;
-    background-repeat: repeat;
-    background-size: 90px 90px;
-    opacity: .18;
-    pointer-events: none;
-  }
-  #profileBg.on { display: block; }
+  #appScreen { flex: 1; display: flex; flex-direction: column; }
 
   header {
     height: 56px; padding: 0 8px;
     padding-top: env(safe-area-inset-top);
     background: #17212b; border-bottom: 1px solid #0f171f;
     display: flex; align-items: center;
-    position: relative; z-index: 2;
   }
   header h1 { flex: 1; text-align: center; font-size: 18px; font-weight: 500; margin: 0; }
   header button {
@@ -45,13 +33,12 @@
     display: flex; align-items: center; justify-content: center;
   }
   header button.hidden { visibility: hidden; }
-  main { flex: 1; overflow-y: auto; position: relative; z-index: 1; }
+  main { flex: 1; overflow-y: auto; }
 
   nav {
     height: 56px;
     background: #17212b; border-top: 1px solid #0f171f;
     display: flex; padding-bottom: env(safe-area-inset-bottom);
-    position: relative; z-index: 2;
   }
   nav button {
     flex: 1; background: transparent; border: 0;
@@ -74,8 +61,7 @@
     background: #6ab2f2; color: #fff;
     border-radius: 50%; font-size: 10px;
     margin-left: 4px; cursor: pointer;
-    vertical-align: middle;
-    flex-shrink: 0;
+    vertical-align: middle; flex-shrink: 0;
   }
   .nft-badge {
     display: inline-block;
@@ -123,6 +109,22 @@
   .profile-top {
     display: flex; flex-direction: column; align-items: center;
     padding: 24px 16px 20px;
+    position: relative;
+    background-repeat: repeat;
+    background-size: 72px 72px;
+    transition: background .3s;
+  }
+  .profile-top.bg-rose {
+    background-color: #4a0a1e;
+    background-image: radial-gradient(circle at 50% 30%, rgba(180,20,60,.45), rgba(30,5,15,.9)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><text x='36' y='50' font-size='36' text-anchor='middle'>🌹</text></svg>");
+  }
+  .profile-top.bg-orb {
+    background-color: #2a0a4a;
+    background-image: radial-gradient(circle at 50% 30%, rgba(120,40,220,.45), rgba(15,5,30,.9)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><text x='36' y='50' font-size='36' text-anchor='middle'>🔮</text></svg>");
+  }
+  .profile-top.bg-slime {
+    background-color: #1a2a3a;
+    background-image: radial-gradient(circle at 50% 30%, rgba(80,140,200,.45), rgba(5,15,25,.9)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><text x='36' y='50' font-size='36' text-anchor='middle'>🐱</text></svg>");
   }
   .profile-avatar {
     width: 110px; height: 110px; border-radius: 50%;
@@ -142,7 +144,7 @@
   .profile-name { font-size: 22px; font-weight: 500; margin-bottom: 4px; display:flex; align-items:center; }
   .profile-username { font-size: 15px; color: #6ab2f2; margin-bottom: 4px; }
   .profile-id { font-size: 13px; color: #5a6a7a; }
-  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin-bottom: 16px; }
+  .profile-actions { display: flex; gap: 8px; padding: 0 12px; margin-bottom: 16px; margin-top: 16px; }
   .profile-action {
     flex: 1; background: #232e3c; border-radius: 12px;
     padding: 12px 8px;
@@ -171,8 +173,8 @@
   /* сетка подарков */
   .gift-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   .gift-card {
     background: linear-gradient(135deg, #232e3c, #2a3a5c);
@@ -182,6 +184,8 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    min-height: 80px;
+    display: flex; align-items: center; justify-content: center;
   }
   .gift-card.nft {
     background-size: cover;
@@ -189,6 +193,7 @@
     min-height: 140px;
     display: flex; flex-direction: column;
     justify-content: flex-end;
+    grid-column: span 1;
   }
   .gift-card .num {
     position: absolute; top: 8px; right: 8px;
@@ -196,16 +201,14 @@
     color: #fff; font-size: 11px;
     padding: 2px 8px; border-radius: 10px;
   }
-  .gift-card .gift-emoji { font-size: 44px; margin-bottom: 6px; }
-  .gift-card .gift-name { font-size: 13px; font-weight: 500; }
-  .gift-card .gift-price { font-size: 13px; color: #6ab2f2; margin-top: 4px; }
+  .gift-card .gift-emoji { font-size: 40px; margin: 0; }
   .gift-card .gift-owner {
-    font-size: 11px; color: #8b95a7; margin-top: 4px;
-    background: rgba(0,0,0,.4);
-    padding: 3px 6px; border-radius: 6px;
+    font-size: 11px; color: #eee;
+    background: rgba(0,0,0,.5);
+    padding: 3px 8px; border-radius: 8px;
+    margin: 4px 6px 0;
   }
-
-  /* настройки */
+   /* настройки */
   .settings-row {
     display: flex; align-items: center; gap: 16px;
     padding: 14px 20px; min-height: 56px;
@@ -249,9 +252,30 @@
     border-radius: 12px; background: #182533;
     font-size: 15px; word-wrap: break-word;
     align-self: flex-start;
+    touch-action: pan-y;
+    transition: transform .15s ease;
+    position: relative;
   }
+  .msg.swiping { transition: none; }
   .msg.own { background: #2b5278; align-self: flex-end; }
   .msg .meta { font-size: 11px; opacity: .6; margin-top: 4px; }
+  .msg .reply-quote {
+    background: rgba(0,0,0,.25);
+    border-left: 3px solid #6ab2f2;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    overflow: hidden;
+  }
+  .msg .reply-quote .qname {
+    color: #6ab2f2; font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .msg .reply-quote .qtext {
+    color: #ccc;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
 
   /* NFT-карточка в чате */
   .nft-card {
@@ -266,7 +290,7 @@
     color: #fff;
     background-size: cover;
     background-position: center;
-    min-height: 200px;
+    min-height: 220px;
     display: flex; flex-direction: column;
     justify-content: space-between;
     border: 1px solid rgba(255,255,255,.15);
@@ -280,12 +304,12 @@
   }
   .nft-card .nft-label {
     position: absolute; top: 10px; right: 10px;
-    background: rgba(138, 82, 255, .8);
+    background: rgba(138, 82, 255, .85);
     padding: 3px 10px; border-radius: 12px;
     font-size: 11px; font-weight: 500;
   }
   .nft-card .nft-img {
-    width: 100px; height: 100px;
+    width: 110px; height: 110px;
     margin: 20px auto 8px;
     background-size: contain;
     background-repeat: no-repeat;
@@ -293,7 +317,7 @@
     filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
   }
   .nft-card .nft-from {
-    font-size: 13px; color: #ddd;
+    font-size: 13px; color: #eee;
     background: rgba(0,0,0,.4);
     padding: 6px 12px; border-radius: 10px;
     margin-top: 8px;
@@ -304,6 +328,26 @@
     padding: 8px 20px; border-radius: 16px;
     font-size: 13px; cursor: pointer;
     margin-top: 10px;
+  }
+
+  /* reply-preview */
+  .reply-preview {
+    display: none;
+    padding: 8px 16px;
+    background: #232e3c;
+    border-top: 1px solid #0f171f;
+    align-items: center; gap: 10px;
+  }
+  .reply-preview.on { display: flex; }
+  .reply-preview .rp-body { flex: 1; min-width: 0; }
+  .reply-preview .rp-name { color: #6ab2f2; font-size: 13px; }
+  .reply-preview .rp-text {
+    color: #7d8e9e; font-size: 13px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .reply-preview button {
+    background: transparent; border: 0;
+    color: #7d8e9e; font-size: 18px; cursor: pointer;
   }
 
   .room-input {
@@ -361,7 +405,7 @@
     border-radius: 10px; font-size: 15px; cursor: pointer;
   }
 
-  /* каталог NFT / подарков */
+  /* каталог магазина */
   .shop-grid {
     display: grid; grid-template-columns: repeat(2, 1fr);
     gap: 10px; padding: 4px 0;
@@ -395,7 +439,6 @@
 <body>
 
 <div id="appScreen">
-  <div id="profileBg"></div>
   <header>
     <button id="searchBtn">🔍</button>
     <h1 id="title">Чаты</h1>
@@ -416,6 +459,13 @@
     <h2 id="roomTitle">Чат</h2>
   </div>
   <div id="roomMessages"></div>
+  <div class="reply-preview" id="replyPreview">
+    <div class="rp-body">
+      <div class="rp-name" id="rpName">Имя</div>
+      <div class="rp-text" id="rpText">Текст</div>
+    </div>
+    <button id="rpClose">✕</button>
+  </div>
   <div class="room-input">
     <input id="roomInput" placeholder="Сообщение" autocomplete="off">
     <button id="giftBtn">🎁</button>
@@ -444,11 +494,22 @@
 
 <div class="modal" id="editUsernameModal">
   <div class="modal-body">
-    <h3>Юзернейм</h3>
+    <h3>Основной юзернейм</h3>
     <input id="editUsernameInput" placeholder="ivan_ivanov" maxlength="16">
     <div class="err" id="editUsernameErr"></div>
     <button class="save" id="editUsernameSave">Сохранить</button>
     <button class="close" id="editUsernameClose">Отмена</button>
+  </div>
+</div>
+
+<div class="modal" id="buyUsernameModal">
+  <div class="modal-body">
+    <h3>Купить юзернейм</h3>
+    <p id="buyUsernamePriceText">Цена: 50 🔮</p>
+    <input id="buyUsernameInput" placeholder="новый_юзернейм" maxlength="16">
+    <div class="err" id="buyUsernameErr"></div>
+    <button class="save" id="buyUsernameSave">Купить</button>
+    <button class="close" id="buyUsernameClose">Отмена</button>
   </div>
 </div>
 
@@ -505,7 +566,6 @@ var title = $('title');
 var currentTab = 'chats';
 var currentRoom = null;
 var ws = null;
-var profileNftType = user.profileNftType || null;
 
 var NFT_INFO = {
   rose:  { name: 'Роза',  price: 1500, img: '/nft/nft-rose.png'  },
@@ -531,15 +591,15 @@ function creatorBadge(isCreator) {
   if (!isCreator) return '';
   return '<span class="creator-check" onclick="event.stopPropagation();document.getElementById(\'creatorModal\').classList.add(\'on\')">✓</span>';
 }
-function profileNftBadge() {
-  if (!profileNftType || !NFT_INFO[profileNftType]) return '';
-  var info = NFT_INFO[profileNftType];
-  return '<span class="nft-badge" style="background-image:url(' + info.img + ')" title="' + info.name + '"></span>';
-}
 function findNftById(nftId) {
   var list = user.nfts || [];
   for (var i = 0; i < list.length; i++) if (list[i].id === nftId) return list[i];
   return null;
+}
+function profileNftType() {
+  if (!user.profileNft) return null;
+  var n = findNftById(user.profileNft);
+  return n ? n.type : null;
 }
 
 // ===== WEBSOCKET =====
@@ -566,13 +626,6 @@ function setTab(tab) {
   document.querySelectorAll('nav button').forEach(function(b) {
     b.classList.toggle('on', b.getAttribute('data-tab') === tab);
   });
-  var bg = $('profileBg');
-  if (tab === 'profile' && profileNftType) {
-    bg.style.backgroundImage = 'url(' + NFT_INFO[profileNftType].img + ')';
-    bg.classList.add('on');
-  } else {
-    bg.classList.remove('on');
-  }
   if (tab === 'chats') {
     title.textContent = 'Чаты';
     $('searchBtn').classList.remove('hidden');
@@ -658,8 +711,10 @@ function renderContacts() {
 
 // ===== НАСТРОЙКИ =====
 function renderSettings() {
+  var extras = (user.extraUsernames || []).length;
   main.innerHTML =
     '<div class="settings-row" id="sAccount"><div class="row-icon">👤</div><div class="row-body"><div class="row-title">Аккаунт</div></div><div class="row-arrow">›</div></div>' +
+    '<div class="settings-row" id="sUsernames"><div class="row-icon">🔖</div><div class="row-body"><div class="row-title">Дополнительные юзернеймы</div><div class="row-value">' + extras + ' / 5</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sOxy"><div class="row-icon">🔮</div><div class="row-body"><div class="row-title">Окси</div><div class="row-value">' + (user.oxy || 0) + ' 🔮</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sShop"><div class="row-icon">🛍</div><div class="row-body"><div class="row-title">Магазин</div><div class="row-value">NFT и подарки</div></div><div class="row-arrow">›</div></div>' +
     '<div class="settings-row" id="sNotif"><div class="row-icon">🔔</div><div class="row-body"><div class="row-title">Уведомления</div></div><div class="row-arrow">›</div></div>' +
@@ -667,6 +722,7 @@ function renderSettings() {
     '<div class="settings-row danger" id="sLogout"><div class="row-icon">🚪</div><div class="row-body"><div class="row-title">Выйти из аккаунта</div></div><div class="row-arrow">›</div></div>';
 
   $('sAccount').onclick = function() { setTab('profile'); };
+  $('sUsernames').onclick = function() { openBuyUsername(); };
   $('sOxy').onclick = function() {
     if (user.isAdmin) {
       var add = prompt('Баланс: ' + (user.oxy || 0) + ' 🔮\nСколько добавить?', '10000');
@@ -709,12 +765,13 @@ function renderProfile() {
   var avStyle = user.avatar ? ' style="background-image:url(' + user.avatar + ')"' : '';
   var avText = user.avatar ? '' : initial;
   var check = creatorBadge(user.isCreator);
-  var nftBadge = profileNftBadge();
+  var pType = profileNftType();
+  var bgClass = pType ? ' bg-' + pType : '';
 
   main.innerHTML =
-    '<div class="profile-top">' +
+    '<div class="profile-top' + bgClass + '">' +
       '<div class="profile-avatar" id="pAvatar"' + avStyle + '>' + avText + '<div class="cam">📷</div></div>' +
-      '<div class="profile-name">' + escapeHtml(name) + check + nftBadge + '</div>' +
+      '<div class="profile-name">' + escapeHtml(name) + check + '</div>' +
       '<div class="profile-username">' + escapeHtml(username) + '</div>' +
       '<div class="profile-id">ID: ' + (user.id || '?') + '</div>' +
     '</div>' +
@@ -756,7 +813,6 @@ function renderProfileTabContent() {
     c.innerHTML = '<div class="empty"><div class="icon">📷</div><h2>Публикации</h2><p>Скоро</p></div>';
     return;
   }
-  // gifts
   var nfts = user.nfts || [];
   var gifts = user.gifts || [];
   var html = '';
@@ -771,9 +827,7 @@ function renderProfileTabContent() {
     gifts.forEach(function(g, i) {
       var info = GIFTS_ORD[g.giftId] || {};
       html += '<div class="gift-card" data-gift="' + i + '">' +
-        '<div class="gift-emoji">' + (info.emoji || '🎁') + '</div>' +
-        '<div class="gift-name">' + (info.name || g.giftId) + '</div>' +
-        '<div class="gift-price">' + (info.price || 0) + ' 🔮</div></div>';
+        '<div class="gift-emoji">' + (info.emoji || '🎁') + '</div></div>';
     });
     html += '</div>';
   } else {
@@ -788,14 +842,13 @@ function renderProfileTabContent() {
     el.onclick = function() { sellOrdinaryGift(Number(el.getAttribute('data-gift'))); };
   });
 }
- // ===== МАГАЗИН (NFT + подарки) =====
+ // ===== МАГАЗИН =====
 function openShop() {
   $('shopModal').classList.add('on');
   $('shopTitle').textContent = 'Магазин — ' + (user.oxy || 0) + ' 🔮';
   var grid = $('shopGrid');
   grid.innerHTML = '';
 
-  // NFT
   Object.keys(NFT_INFO).forEach(function(type) {
     var info = NFT_INFO[type];
     var card = document.createElement('div');
@@ -825,7 +878,6 @@ function openShop() {
     grid.appendChild(card);
   });
 
-  // Обычные подарки
   Object.keys(GIFTS_ORD).forEach(function(gid) {
     var info = GIFTS_ORD[gid];
     var card = document.createElement('div');
@@ -871,10 +923,7 @@ $('nftActionProfile').onclick = function() {
     .then(function(d) {
       if (!d.ok) { alert(d.error || 'Ошибка'); return; }
       user.profileNft = newId;
-      var nft = findNftById(currentNftId);
-      user.profileNftType = newId && nft ? nft.type : null;
       localStorage.setItem('user', JSON.stringify(user));
-      profileNftType = user.profileNftType;
       $('nftActionModal').classList.remove('on');
       renderProfile();
     });
@@ -900,11 +949,7 @@ $('nftActionGift').onclick = function() {
         .then(function(d) {
           if (!d.ok) { alert(d.error || 'Ошибка'); return; }
           user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
-          if (user.profileNft === currentNftId) {
-            user.profileNft = null;
-            user.profileNftType = null;
-            profileNftType = null;
-          }
+          if (user.profileNft === currentNftId) user.profileNft = null;
           localStorage.setItem('user', JSON.stringify(user));
           $('nftActionModal').classList.remove('on');
           alert('Подарок передан @' + u.username);
@@ -930,11 +975,7 @@ $('nftActionSell').onclick = function() {
       if (!d.ok) { alert(d.error || 'Ошибка'); return; }
       user.nfts = (user.nfts || []).filter(function(n) { return n.id !== currentNftId; });
       user.oxy = d.balance;
-      if (user.profileNft === currentNftId) {
-        user.profileNft = null;
-        user.profileNftType = null;
-        profileNftType = null;
-      }
+      if (user.profileNft === currentNftId) user.profileNft = null;
       localStorage.setItem('user', JSON.stringify(user));
       $('nftActionModal').classList.remove('on');
       alert('Продано! +' + d.payout + ' 🔮');
@@ -962,8 +1003,12 @@ function sellOrdinaryGift(index) {
 }
 
 // ===== КОМНАТА =====
+var replyToMsg = null;
+
 function openRoom(chatId, name, other) {
   currentRoom = { id: chatId, name: name, other: other };
+  replyToMsg = null;
+  $('replyPreview').classList.remove('on');
   $('roomTitle').textContent = name;
   $('roomMessages').innerHTML = '<div style="color:#5a6a7a;text-align:center;padding:12px">Загрузка...</div>';
   $('roomScreen').classList.add('on');
@@ -973,7 +1018,11 @@ function openRoom(chatId, name, other) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       $('roomMessages').innerHTML = '';
-      if (data.messages) data.messages.forEach(addMessage);
+      if (data.messages) {
+        data.messages.forEach(function(m) {
+          addMessage(m, data.messages);
+        });
+      }
       $('roomMessages').scrollTop = $('roomMessages').scrollHeight;
     })
     .catch(function() {
@@ -981,7 +1030,7 @@ function openRoom(chatId, name, other) {
     });
 }
 
-function addMessage(m) {
+function addMessage(m, allMessages) {
   // NFT-карточка
   if (m.nft) {
     var info = NFT_INFO[m.nft.type] || {};
@@ -989,16 +1038,13 @@ function addMessage(m) {
     var div = document.createElement('div');
     div.className = 'nft-card' + (own ? ' own' : '');
     div.style.backgroundImage = 'url(' + info.img + ')';
-    var fromName = own ? 'вас' : (currentRoom && currentRoom.other ? currentRoom.other.name || 'собеседник' : 'собеседник');
+    var fromName = own ? 'вас' : (currentRoom && currentRoom.other ? (currentRoom.other.name || 'собеседник') : 'собеседник');
     div.innerHTML =
       '<div class="nft-num">#' + (m.nft.number || '?') + '</div>' +
       '<div class="nft-label">подарок</div>' +
       '<div class="nft-img" style="background-image:url(' + info.img + ')"></div>' +
       '<div class="nft-from">Подарок от ' + escapeHtml(fromName) + '</div>' +
       '<button class="nft-view-btn">Посмотреть</button>';
-    div.querySelector('.nft-view-btn').onclick = function() {
-      if (currentRoom && currentRoom.other) alert('Профиль ' + (currentRoom.other.name || ''));
-    };
     $('roomMessages').appendChild(div);
     return;
   }
@@ -1006,13 +1052,80 @@ function addMessage(m) {
   var own2 = m.from_user === user.id;
   var div2 = document.createElement('div');
   div2.className = 'msg' + (own2 ? ' own' : '');
-  div2.innerHTML = escapeHtml(m.text || '') + '<div class="meta">' + fmtTime(m.created_at) + '</div>';
+  var html = '';
+  // reply-цитата
+  if (m.reply_to && allMessages) {
+    var orig = null;
+    for (var i = 0; i < allMessages.length; i++) {
+      if (allMessages[i].id === m.reply_to) { orig = allMessages[i]; break; }
+    }
+    if (orig) {
+      var origName = orig.from_user === user.id ? 'Вы' : (currentRoom && currentRoom.other ? (currentRoom.other.name || 'Собеседник') : 'Собеседник');
+      var origText = orig.text || (orig.image ? '📷 Фото' : '');
+      html += '<div class="reply-quote"><div class="qname">' + escapeHtml(origName) + '</div><div class="qtext">' + escapeHtml(String(origText).slice(0,80)) + '</div></div>';
+    }
+  }
+  html += escapeHtml(m.text || '') + '<div class="meta">' + fmtTime(m.created_at) + '</div>';
+  div2.innerHTML = html;
+  attachSwipeReply(div2, m);
   $('roomMessages').appendChild(div2);
 }
+
+function attachSwipeReply(el, m) {
+  var startX = 0, startY = 0, currentX = 0, isDragging = false, isHorizontal = false;
+  el.addEventListener('touchstart', function(e) {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    currentX = 0;
+    isDragging = true;
+    isHorizontal = false;
+  }, { passive: true });
+  el.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    var x = e.touches[0].clientX;
+    var y = e.touches[0].clientY;
+    var dx = x - startX;
+    var dy = y - startY;
+    if (!isHorizontal) {
+      if (Math.abs(dx) > Math.abs(dy) + 5) { isHorizontal = true; el.classList.add('swiping'); }
+      else if (Math.abs(dy) > 10) { isDragging = false; return; }
+    }
+    if (isHorizontal && dx > 0 && dx < 100) {
+      currentX = dx;
+      el.style.transform = 'translateX(' + dx + 'px)';
+    }
+  }, { passive: true });
+  el.addEventListener('touchend', function() {
+    isDragging = false;
+    el.classList.remove('swiping');
+    el.style.transform = '';
+    if (isHorizontal && currentX > 50) setReplyTo(m);
+    currentX = 0;
+    isHorizontal = false;
+  });
+}
+
+function setReplyTo(m) {
+  replyToMsg = m;
+  var fromName = m.from_user === user.id ? 'Вы' : (currentRoom && currentRoom.other ? (currentRoom.other.name || 'Собеседник') : 'Собеседник');
+  var text = m.text || (m.image ? '📷 Фото' : '');
+  $('rpName').textContent = fromName;
+  $('rpText').textContent = String(text).slice(0, 100);
+  $('replyPreview').classList.add('on');
+  $('roomInput').focus();
+}
+
+$('rpClose').onclick = function() {
+  replyToMsg = null;
+  $('replyPreview').classList.remove('on');
+};
 
 $('roomBack').onclick = function() {
   $('roomScreen').classList.remove('on');
   currentRoom = null;
+  replyToMsg = null;
+  $('replyPreview').classList.remove('on');
   if (currentTab === 'chats') renderChats();
 };
 
@@ -1020,15 +1133,19 @@ $('roomSend').onclick = function() {
   var text = $('roomInput').value.trim();
   if (!text || !currentRoom) return;
   if (!ws || ws.readyState !== 1) { alert('Нет соединения'); return; }
-  ws.send(JSON.stringify({ type: 'send', chatId: currentRoom.id, text: text }));
+  var payload = { type: 'send', chatId: currentRoom.id, text: text };
+  if (replyToMsg) payload.replyTo = replyToMsg.id;
+  ws.send(JSON.stringify(payload));
   $('roomInput').value = '';
+  replyToMsg = null;
+  $('replyPreview').classList.remove('on');
 };
 
 $('roomInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') $('roomSend').click();
 });
 
-// кнопка подарка в чате
+// подарок в чате
 $('giftBtn').onclick = function() {
   if (!currentRoom) return;
   openGiftChat();
@@ -1039,7 +1156,6 @@ function openGiftChat() {
   var grid = $('shopGrid');
   grid.innerHTML = '';
 
-  // NFT подарки
   Object.keys(NFT_INFO).forEach(function(type) {
     var info = NFT_INFO[type];
     var hasNft = (user.nfts || []).some(function(n) { return n.type === type; });
@@ -1056,7 +1172,6 @@ function openGiftChat() {
     grid.appendChild(card);
   });
 
-  // обычные подарки
   Object.keys(GIFTS_ORD).forEach(function(gid) {
     var info = GIFTS_ORD[gid];
     var card = document.createElement('div');
@@ -1084,7 +1199,7 @@ function giveNftToFriend(type) {
     .then(function(d) {
       if (!d.ok) { alert(d.error || 'Ошибка'); return; }
       user.nfts = user.nfts.filter(function(n) { return n.id !== nft.id; });
-      if (user.profileNft === nft.id) { user.profileNft = null; user.profileNftType = null; profileNftType = null; }
+      if (user.profileNft === nft.id) user.profileNft = null;
       localStorage.setItem('user', JSON.stringify(user));
       ws.send(JSON.stringify({
         type: 'send',
@@ -1221,6 +1336,47 @@ $('editUsernameSave').onclick = function() {
       $('editUsernameModal').classList.remove('on');
       renderProfile();
     });
+};
+
+// доп. юзернеймы
+function openBuyUsername() {
+  fetch('/api/username/price', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.max <= d.count) {
+        alert('Максимум 5 дополнительных юзернеймов');
+        return;
+      }
+      $('buyUsernamePriceText').textContent = 'Цена: ' + d.price + ' 🔮 (' + d.count + ' / ' + d.max + ')';
+      $('buyUsernameInput').value = '';
+      $('buyUsernameErr').textContent = '';
+      $('buyUsernameModal').classList.add('on');
+      $('buyUsernameInput').focus();
+    });
+}
+$('buyUsernameClose').onclick = function() { $('buyUsernameModal').classList.remove('on'); };
+$('buyUsernameSave').onclick = function() {
+  var username = $('buyUsernameInput').value.trim().toLowerCase();
+  if (!/^[a-z0-9_]{5,16}$/.test(username)) {
+    $('buyUsernameErr').textContent = '5–16, латиница, цифры, _';
+    return;
+  }
+  fetch('/api/username/buy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ username: username })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.ok) { $('buyUsernameErr').textContent = d.error || 'Ошибка'; return; }
+        user.oxy = d.balance;
+        if (!user.extraUsernames) user.extraUsernames = [];
+        user.extraUsernames.push(d.username);
+        localStorage.setItem('user', JSON.stringify(user));
+        $('buyUsernameModal').classList.remove('on');
+        alert('Юзернейм @' + d.username + ' добавлен');
+        renderSettings();
+      });
 };
 
 $('avatarInput').onchange = function() {
