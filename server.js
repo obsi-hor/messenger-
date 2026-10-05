@@ -60,13 +60,14 @@ function detectExt(buf){
 }
 function publicUser(u){
   return {
-    id:u.id, login:u.login, phone:u.phone, username:u.username,
+    id:u.id, login:u.login, username:u.username,
     extraUsernames:u.extraUsernames||[],
     name:u.name, bio:u.bio, avatar:u.avatar,
     birthday:u.birthday, oxy:u.oxy||0, gifts:u.gifts||[],
     nfts:u.nfts||[], profileNft:u.profileNft||null,
     isAdmin:!!u.isAdmin, isCreator:!!u.isCreator,
-    showPhone:u.showPhone, showLastSeen:u.showLastSeen,
+    twofaSet:!!(u.twofaPassword || u.twofaWord),
+    showLogin:u.showLogin, showLastSeen:u.showLastSeen,
     showBio:u.showBio, showBirthday:u.showBirthday
   };
 }
@@ -176,16 +177,10 @@ async function apiUpdateProfile(req,res){
 async function apiUpdateSettings(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const b=await readBody(req); const patch={};
-  ['showPhone','showLastSeen','showBio','showBirthday'].forEach(k=>{
+  ['showLogin','showLastSeen','showBio','showBirthday'].forEach(k=>{
     if(k in b){const v=String(b[k]); if(['all','contacts','nobody'].includes(v))patch[k]=v;}
   });
   db.updateUser(u.id,patch);
-  json(res,200,{ok:true});
-}
-
-async function apiRemovePhone(req,res){
-  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
-  db.updateUser(u.id, { phone: null });
   json(res,200,{ok:true});
 }
 
@@ -195,14 +190,13 @@ async function apiSetup2fa(req,res){
   const pass = String(b.password||'').trim();
   const word = String(b.word||'').trim();
   if (!pass && !word) {
-    db.updateUser(u.id, { twofaPassword: null, twofaWord: null });
+    db.set2FA(u.id, null, null);
     return json(res,200,{ok:true, removed: true});
   }
   if (pass && pass.length < 4) return json(res,400,{error:'Пароль 2FA минимум 4 символа'});
-  db.updateUser(u.id, { twofaPassword: pass || null, twofaWord: word || null });
+  db.set2FA(u.id, pass || null, word || null);
   json(res,200,{ok:true});
 }
-
 // ===== UPLOADS =====
 async function apiUploadAvatar(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -244,15 +238,35 @@ async function apiUploadPost(req,res){
   }catch(e){console.error(e);json(res,400,{error:'Не удалось'})}
 }
 
+async function apiUploadChannelAvatar(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  try{
+    const buf=await readRaw(req,5*1024*1024);
+    if(!buf.length)return json(res,400,{error:'Пустой файл'});
+    const ext=detectExt(buf); if(!ext)return json(res,400,{error:'Только изображение'});
+    const key='channels/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+ext;
+    const mime=ext==='.jpg'?'image/jpeg':ext==='.png'?'image/png':'image/webp';
+    await uploadToB2(buf,key,mime);
+    json(res,200,{ok:true,image:'/uploads/'+key});
+  }catch(e){console.error(e);json(res,400,{error:'Не удалось'})}
+}
+
 // ===== SEARCH =====
 async function apiSearch(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const q=String(new URL(req.url,'http://x').searchParams.get('q')||'').trim().toLowerCase();
-  if(!q)return json(res,200,{users:[]});
+  if(!q)return json(res,200,{users:[],channels:[]});
   const r=db.findUserByUsername(q);
-  if(r&&r.id!==u.id){
-    json(res,200,{users:[{id:r.id,name:r.name,username:r.username,avatar:r.avatar,isCreator:!!r.isCreator}]});
-  }else json(res,200,{users:[]});
+  const ch = db.findChannelByUsername(q);
+  const users = (r && r.id !== u.id) ? [{
+    id:r.id, name:r.name, username:r.username,
+    avatar:r.avatar, isCreator:!!r.isCreator
+  }] : [];
+  const channels = ch ? [{
+    id: ch.id, title: ch.title, username: ch.username,
+    avatar: ch.avatar, subscribers: (ch.subscribers||[]).length
+  }] : [];
+  json(res,200,{users:users, channels:channels});
 }
 
 async function apiUserInfo(req,res){
@@ -260,15 +274,22 @@ async function apiUserInfo(req,res){
   const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
   const u=db.findUserById(id); if(!u)return json(res,404,{error:'Не найден'});
   const isSelf=me.id===u.id;
-  const out={id:u.id,name:u.name,username:u.username,extraUsernames:u.extraUsernames||[],
-    avatar:u.avatar,online:!!u.online,lastSeen:u.lastSeen,oxy:u.oxy||0,
-    gifts:u.gifts||[],nfts:u.nfts||[],profileNft:u.profileNft||null,
-    isCreator:!!u.isCreator,isAdmin:!!u.isAdmin,isContact:false};
-  if(isSelf){out.login=u.login;out.bio=u.bio||'';out.birthday=u.birthday||'';}
-  else{
-    out.bio=u.showBio==='nobody'?'':(u.bio||'');
-    out.birthday=u.showBirthday==='nobody'?'':(u.birthday||'');
-    if(u.showLastSeen==='nobody'){out.online=false;out.lastSeen=null;}
+  const out={
+    id:u.id, name:u.name, username:u.username,
+    extraUsernames:u.extraUsernames||[],
+    avatar:u.avatar, online:!!u.online, lastSeen:u.lastSeen,
+    oxy:u.oxy||0, gifts:u.gifts||[], nfts:u.nfts||[],
+    profileNft:u.profileNft||null,
+    isCreator:!!u.isCreator, isAdmin:!!u.isAdmin,
+    isContact: db.isContact(me.id, u.id)
+  };
+  if(isSelf){
+    out.login=u.login; out.bio=u.bio||''; out.birthday=u.birthday||'';
+  } else {
+    out.login = u.showLogin === 'nobody' ? null : u.login;
+    out.bio = u.showBio === 'nobody' ? '' : (u.bio || '');
+    out.birthday = u.showBirthday === 'nobody' ? '' : (u.birthday || '');
+    if(u.showLastSeen === 'nobody'){ out.online=false; out.lastSeen=null; }
   }
   json(res,200,out);
 }
@@ -290,13 +311,49 @@ async function apiCreateChat(req,res){
 async function apiMessages(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
   const chatId=Number(new URL(req.url,'http://x').searchParams.get('chatId'));
-  if(!db.isChatMember(chatId,u.id))return json(res,403,{error:'Нет доступа'});
+  const chat=db.getChatById(chatId);
+  if(!chat)return json(res,404,{error:'Не найден'});
+  // для приватного чата — проверка членства; для канала — все могут читать
+  if(chat.type === 'private' && !db.isChatMember(chatId,u.id))return json(res,403,{error:'Нет доступа'});
   const changed=db.markChatRead(chatId,u.id);
   if(changed){
-    const chat=db.getChatById(chatId);
     for(const m of chat.members) if(m!==u.id) sendToUser(m,{type:'read',chatId,by:u.id});
   }
-  json(res,200,{messages:db.getChatMessages(chatId, u.id)});
+  json(res,200,{messages:db.getChatMessages(chatId, u.id), chat: {
+    id: chat.id, type: chat.type, title: chat.title || null,
+    username: chat.username || null, avatar: chat.avatar || null,
+    ownerId: chat.ownerId || null,
+    subscribersCount: chat.subscribers ? chat.subscribers.length : 0,
+    description: chat.description || null,
+    isMember: chat.members ? chat.members.includes(u.id) : false
+  }});
+}
+
+// ===== BLOCK / CLEAR =====
+async function apiBlock(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.blockUser(u.id, Number(b.userId));
+  if(r.error) return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
+}
+async function apiUnblock(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  db.unblockUser(u.id, Number(b.userId));
+  json(res,200,{ok:true});
+}
+async function apiClearChat(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const chatId = Number(b.chatId);
+  if(!db.isChatMember(chatId, u.id)) return json(res,403,{error:'Нет доступа'});
+  if (b.all) {
+    db.clearChatForAll(chatId);
+  } else {
+    db.clearChatForUser(chatId, u.id);
+  }
+  json(res,200,{ok:true});
 }
 
 // ===== OXY =====
@@ -311,8 +368,7 @@ async function apiOxyTopup(req,res){
   const amount=Math.max(1,Math.min(999999999,Number(b.amount)||0));
   const r=db.addOxy(u.id,amount,'Пополнение (админ)');
   json(res,200,{ok:true,balance:r.balance});
-}
-
+                                         }
 // ===== ORDINARY GIFTS =====
 async function apiSendGift(req,res){
   const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
@@ -402,6 +458,65 @@ async function apiAddContact(req,res){
   json(res,200,{ok:true});
 }
 
+// ===== POSTS =====
+async function apiUserPosts(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
+  json(res,200,{posts:db.getPosts(id,50)});
+}
+async function apiCreatePost(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const post = db.createPost(u.id, b.image||null, String(b.text||'').slice(0,1000));
+  json(res,200,{ok:true,post:post});
+}
+async function apiDeletePost(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.deletePost(Number(b.postId), u.id);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,{ok:true});
+}
+
+// ===== CHANNELS =====
+async function apiCreateChannel(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const title = String(b.title||'').trim();
+  const username = b.username ? String(b.username).trim().toLowerCase() : null;
+  const description = String(b.description||'').trim();
+  const r = db.createChannel(u.id, title, username, description);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,r);
+}
+async function apiSubscribeChannel(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.subscribeToChannel(Number(b.chatId), u.id);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,r);
+}
+async function apiUnsubscribeChannel(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const b=await readBody(req);
+  const r = db.unsubscribeFromChannel(Number(b.chatId), u.id);
+  if(r.error)return json(res,400,{error:r.error});
+  json(res,200,r);
+}
+async function apiChannelInfo(req,res){
+  const u=getUser(req); if(!u)return json(res,401,{error:'Не авторизован'});
+  const id=Number(new URL(req.url,'http://x').searchParams.get('id'));
+  const chat=db.getChatById(id);
+  if(!chat || chat.type !== 'channel')return json(res,404,{error:'Канал не найден'});
+  json(res,200,{
+    id: chat.id, title: chat.title, username: chat.username,
+    description: chat.description || '', avatar: chat.avatar || null,
+    ownerId: chat.ownerId,
+    subscribersCount: (chat.subscribers||[]).length,
+    isMember: (chat.members||[]).includes(u.id)
+  });
+}
+
 // ===== HTTP =====
 const server=http.createServer(async(req,res)=>{
   const url=req.url.split('?')[0];
@@ -416,12 +531,15 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/avatar'       && req.method==='POST')return apiUploadAvatar(req,res);
     if(url==='/api/upload-chat'  && req.method==='POST')return apiUploadChat(req,res);
     if(url==='/api/upload-post'  && req.method==='POST')return apiUploadPost(req,res);
-    if(url==='/api/remove-phone' && req.method==='POST')return apiRemovePhone(req,res);
+    if(url==='/api/upload-channel-avatar' && req.method==='POST')return apiUploadChannelAvatar(req,res);
     if(url==='/api/search'       && req.method==='GET') return apiSearch(req,res);
     if(url==='/api/user'         && req.method==='GET') return apiUserInfo(req,res);
     if(url==='/api/chats'        && req.method==='GET') return apiChats(req,res);
     if(url==='/api/chats/create' && req.method==='POST')return apiCreateChat(req,res);
     if(url==='/api/messages'     && req.method==='GET') return apiMessages(req,res);
+    if(url==='/api/block'        && req.method==='POST')return apiBlock(req,res);
+    if(url==='/api/unblock'      && req.method==='POST')return apiUnblock(req,res);
+    if(url==='/api/chat/clear'   && req.method==='POST')return apiClearChat(req,res);
     if(url==='/api/oxy'          && req.method==='GET') return apiOxyBalance(req,res);
     if(url==='/api/oxy/topup'    && req.method==='POST')return apiOxyTopup(req,res);
     if(url==='/api/gift'         && req.method==='POST')return apiSendGift(req,res);
@@ -435,6 +553,13 @@ const server=http.createServer(async(req,res)=>{
     if(url==='/api/username/price'&&req.method==='GET') return apiUsernamePrice(req,res);
     if(url==='/api/contacts'     && req.method==='GET') return apiContacts(req,res);
     if(url==='/api/contacts/add' && req.method==='POST')return apiAddContact(req,res);
+    if(url==='/api/posts'        && req.method==='GET') return apiUserPosts(req,res);
+    if(url==='/api/posts/create' && req.method==='POST')return apiCreatePost(req,res);
+    if(url==='/api/posts/delete' && req.method==='POST')return apiDeletePost(req,res);
+    if(url==='/api/channel/create'  && req.method==='POST')return apiCreateChannel(req,res);
+    if(url==='/api/channel/subscribe'&&req.method==='POST')return apiSubscribeChannel(req,res);
+    if(url==='/api/channel/unsubscribe'&&req.method==='POST')return apiUnsubscribeChannel(req,res);
+    if(url==='/api/channel'         && req.method==='GET') return apiChannelInfo(req,res);
   }catch(e){console.error('API ERROR:',e);return json(res,500,{error:'Ошибка'})}
   serveStatic(req,res);
 });
@@ -460,14 +585,26 @@ wss.on('connection',(ws,req)=>{
       const chatId=Number(d.chatId);
       const text=String(d.text||'').trim().slice(0,2000);
       const image=d.image?String(d.image).slice(0,500):null;
-            const replyTo = d.replyTo ? Number(d.replyTo) : null;
-      const nftData = d.nft || null;
+      const replyTo=d.replyTo?Number(d.replyTo):null;
+      const nftData=d.nft||null;
       if(!text&&!image&&!nftData)return;
-      if(!db.isChatMember(chatId,u.id))return;
-      const extra = nftData ? { nft: nftData } : null;
-      const msg=db.createMessage(chatId,u.id,text,image,replyTo,extra);
+      if(!db.canWriteToChat(chatId,u.id))return;
       const chat=db.getChatById(chatId);
-      for(const m of chat.members) sendToUser(m,{type:'message',chatId,message:msg});
+      // проверка блокировки для приватных
+      if(chat.type === 'private'){
+        for(const memberId of chat.members){
+          if(memberId === u.id) continue;
+          if(db.isBlocked(u.id, memberId)){
+            ws.send(JSON.stringify({type:'blocked',chatId}));
+            return;
+          }
+        }
+      }
+      const extra=nftData?{nft:nftData}:null;
+      const msg=db.createMessage(chatId,u.id,text,image,replyTo,extra);
+      // канал — рассылаем подписчикам; приват — участникам
+      const targets = chat.type === 'channel' ? (chat.subscribers||[]) : chat.members;
+      for(const m of targets) sendToUser(m,{type:'message',chatId,message:msg});
     }
   });
   ws.on('close',()=>{ clients.delete(ws); db.setOnline(u.id,false); });
