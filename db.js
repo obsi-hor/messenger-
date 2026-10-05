@@ -419,3 +419,41 @@ export function addIpRegistration(ip, userId) {
   data.registrations.push({ ip, user_id: userId, ts: Date.now() });
   markDirty();
 }
+// ===== EXTRA USERNAMES =====
+const USERNAME_PRICES = [0, 50, 100, 150, 200, 300];
+
+export function usernameExists(username) {
+  if (!username) return false;
+  const u = username.toLowerCase().trim();
+  return data.users.some(x =>
+    x.username === u || (x.extraUsernames || []).includes(u)
+  );
+}
+
+export function buyExtraUsername(userId, username) {
+  const u = findUserById(userId);
+  if (!u) return { error: 'Пользователь не найден' };
+  const un = username.toLowerCase().trim();
+  if (!/^[a-z0-9_]{5,16}$/.test(un)) return { error: 'Юзернейм: 5–16, латиница, цифры, _' };
+  const extra = u.extraUsernames || [];
+  if (extra.length >= 5) return { error: 'Максимум 5 дополнительных юзернеймов' };
+  if (usernameExists(un) || u.username === un) return { error: 'Юзернейм занят' };
+  const price = USERNAME_PRICES[extra.length + 1] || 300;
+  if ((u.oxy || 0) < price) return { error: 'Нужно ' + price + ' Окси' };
+
+  u.oxy -= price;
+  extra.push(un);
+  u.extraUsernames = extra;
+
+  data.transactions.push({
+    id: (data.transactions.at(-1)?.id || 0) + 1,
+    user_id: userId, amount: -price,
+    reason: 'Покупка юзернейма @' + un, ts: Date.now()
+  });
+  markDirty();
+  return { ok: true, username: un, price, balance: u.oxy };
+}
+
+export function getUsernamePrice(count) {
+  return USERNAME_PRICES[count] || 300;
+}
